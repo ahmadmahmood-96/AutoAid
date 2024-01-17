@@ -10,15 +10,119 @@ import {
   StatusBar,
 } from "react-native";
 import { TextInput } from "react-native-paper";
+import axios from "axios";
+import OTPVerificationModal from "./OTPVerificationModal";
+import Icon from "react-native-vector-icons/FontAwesome";
 
 const ForgotPasswordScreen = ({ navigation }) => {
   const [email, setEmail] = useState("");
-  const [newPassword, setNewPassword] = useState("");
+  const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [showFields, setShowFields] = useState(false);
+  const [isModalVisible, setModalVisibility] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [error, setError] = useState("");
 
-  const handleForgotPassword = () => {
-    console.log("hi");
+  const handleForgotPassword = async () => {
+    let errorMessage = "";
+    if (!email) {
+      errorMessage = "All fields are required.";
+    } else if (showFields) {
+      if (!password || !confirmPassword) {
+        errorMessage = "All fields are required.";
+      } else if (!validatePassword(password)) {
+        errorMessage = "Password is not in proper format.";
+      } else if (password !== confirmPassword) {
+        errorMessage = "Passwords do not match.";
+      }
+    } else if (!validateEmail(email)) {
+      errorMessage = "Invalid email format.";
+    }
+
+    setError(errorMessage);
+    if (!errorMessage) {
+      try {
+        const userEmail = {
+          email,
+        };
+        // Make a POST request to the login API endpoint
+        const response = await axios.post(
+          `http://192.168.1.139:8080/api/verify-email`,
+          userEmail
+        );
+
+        console.log(response.data.message);
+        setModalVisibility(true);
+      } catch (e) {
+        // Handle login errors
+        if (e.response && e.response.data && e.response.data.message) {
+          // Use the custom error message from the backend
+          setError(e.response.data.message);
+        } else {
+          // For other types of errors, use a generic error message
+          console.log(e);
+          setError("Failed to verify email. Please try again.");
+        }
+      }
+    }
+  };
+
+  const handleChangePassword = async () => {
+    try {
+      await axios.post(`http://192.168.1.139:8080/api/change-password`, {
+        email,
+        password,
+      });
+
+      navigation.navigate("LoginScreen");
+
+      // If verification is successful, navigate to the login screen
+    } catch (e) {
+      // Handle errors during verification
+      if (e.response && e.response.data && e.response.data.message) {
+        setError(e.response.data.message);
+      } else {
+        setError("Failed to verify OTP. Please try again.");
+      }
+    }
+  };
+
+  const verifyOtp = async (otp) => {
+    try {
+      const otpNumber = parseInt(otp, 10);
+      await axios.post(`http://192.168.1.139:8080/api/verify`, {
+        email,
+        otpNumber,
+      });
+      setShowFields(true);
+      // If verification is successful, navigate to the login screen
+    } catch (e) {
+      // Handle errors during verification
+      if (e.response && e.response.data && e.response.data.message) {
+        setError(e.response.data.message);
+      } else {
+        setError("Failed to verify OTP. Please try again.");
+      }
+    }
+  };
+
+  const validateEmail = (email) => {
+    const re = /\S+@\S+\.\S+/;
+    return re.test(email);
+  };
+
+  const validatePassword = (password) => {
+    const re = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/;
+    return re.test(password);
+  };
+
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
+
+  const toggleConfirmPasswordVisibility = () => {
+    setShowConfirmPassword(!showConfirmPassword);
   };
 
   return (
@@ -50,6 +154,42 @@ const ForgotPasswordScreen = ({ navigation }) => {
               onChangeText={setEmail}
             />
 
+            {showFields ? (
+              <View>
+                <Text style={styles.inputLabel}>Password</Text>
+                <TextInput
+                  mode="outlined"
+                  style={styles.textInput}
+                  placeholder="Enter your password"
+                  secureTextEntry={!showPassword}
+                  right={
+                    <TextInput.Icon
+                      icon={showPassword ? "eye-off" : "eye"}
+                      onPress={togglePasswordVisibility}
+                    />
+                  }
+                  value={password}
+                  onChangeText={setPassword} // Updating the password state
+                />
+
+                <Text style={styles.inputLabel}>Confirm Password</Text>
+                <TextInput
+                  mode="outlined"
+                  style={styles.textInput}
+                  placeholder="Re-Enter your password"
+                  secureTextEntry={!showConfirmPassword}
+                  right={
+                    <TextInput.Icon
+                      icon={showConfirmPassword ? "eye-off" : "eye"}
+                      onPress={toggleConfirmPasswordVisibility}
+                    />
+                  }
+                  value={confirmPassword}
+                  onChangeText={setConfirmPassword} // Updating the password state
+                />
+              </View>
+            ) : null}
+
             {error ? (
               <View style={styles.errorContainer}>
                 <Icon name="exclamation-circle" size={18} color="red" />
@@ -61,8 +201,23 @@ const ForgotPasswordScreen = ({ navigation }) => {
               style={styles.login}
               onPress={handleForgotPassword}
             >
-              <Text style={styles.loginButtonText}>Reset Password</Text>
+              <Text style={styles.loginButtonText}>Verify</Text>
+              <OTPVerificationModal
+                isVisible={isModalVisible}
+                onConfirm={verifyOtp}
+                onCancel={() => setModalVisibility(false)}
+                email={email} // Pass the email to the modal for display
+              />
             </TouchableOpacity>
+
+            {showFields ? (
+              <TouchableOpacity
+                style={styles.login}
+                onPress={handleChangePassword}
+              >
+                <Text style={styles.loginButtonText}>Reset Password</Text>
+              </TouchableOpacity>
+            ) : null}
           </View>
         </View>
       </TouchableWithoutFeedback>

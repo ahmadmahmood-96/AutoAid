@@ -1,14 +1,27 @@
 import { StyleSheet, View, Image, StatusBar } from "react-native";
 import { useEffect } from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function LandingPage({ navigation }) {
   useEffect(() => {
-    const timer = setTimeout(() => {
-      navigation.navigate("LoginScreen"); // Replace 'LoginScreen' with your actual login screen route name
-    }, 2000); // 2 seconds delay
+    const checkLoginStatus = async () => {
+      try {
+        const token = await AsyncStorage.getItem("authToken");
+        const userRole = await AsyncStorage.getItem("userRole");
 
-    return () => clearTimeout(timer); // Cleanup the timer when the component is unmounted
-  }, [navigation]); // Empty dependency array means it will only run once on mount
+        if (token && userRole && userRole === "VehicleOwner")
+          navigation.navigate("VehicleOwnerHomeScreen");
+        else if (token && userRole && userRole === "WorkshopOwner")
+          navigation.navigate("WorkshopOwnerHomeScreen");
+        else if (token && userRole && userRole === "ServiceProvider")
+          navigation.navigate("ServiceProviderHomeScreen");
+        else navigation.navigate("LoginScreen");
+      } catch (error) {
+        console.log(error.message);
+      }
+    };
+    checkLoginStatus();
+  }, []);
 
   return (
     <>

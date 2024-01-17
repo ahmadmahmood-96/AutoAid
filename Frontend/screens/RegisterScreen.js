@@ -40,11 +40,9 @@ export default function RegisterScreen({ navigation }) {
       errorMessage = "All fields are required.";
     } else if (!validateEmail(email)) {
       errorMessage = "Invalid email format.";
-    }
-    //  else if (!validatePassword(password)) {
-    //   errorMessage = "Password is not in proper format.";
-    // }
-    else if (password !== confirmPassword) {
+    } else if (!validatePassword(password)) {
+      errorMessage = "Password is not in proper format.";
+    } else if (password !== confirmPassword) {
       errorMessage = "Passwords do not match.";
     } else if (!number.match(/^03\d{2}-\d{7}$/)) {
       errorMessage = "Phone number must be in the format 0333-3333333.";
@@ -66,7 +64,7 @@ export default function RegisterScreen({ navigation }) {
         console.log(data);
         // Make a POST request to the backend API
         const response = await axios.post(
-          `http://192.168.100.68:8080/api/register`,
+          `http://192.168.1.139:8080/api/register`,
           data
         );
 
@@ -100,10 +98,11 @@ export default function RegisterScreen({ navigation }) {
   const verifyOtp = async (otp) => {
     try {
       const otpNumber = parseInt(otp, 10);
-      await axios.post(`http://192.168.100.68:8080/api/verify`, {
+      await axios.post(`http://192.168.1.139:8080/api/verify`, {
         email,
         otpNumber,
       });
+      console.log("hi");
       console.log(email);
 
       // If verification is successful, navigate to the login screen
@@ -178,7 +177,7 @@ export default function RegisterScreen({ navigation }) {
               <View style={styles.bodyContainer}>
                 <Text style={styles.title}>Create Your Account</Text>
                 <Text style={styles.subtitle}>
-                  Make sure your acconut stay secure.
+                  Make sure your account stay secure.
                 </Text>
                 <View style={styles.roleContainer}>
                   <Text style={styles.options}>Select Your Role</Text>
@@ -386,7 +385,6 @@ export default function RegisterScreen({ navigation }) {
                   onPress={handleRegisterPress}
                 >
                   <Text style={styles.loginButtonText}>Create Account</Text>
-
                   <OTPVerificationModal
                     isVisible={isModalVisible}
                     onConfirm={verifyOtp}

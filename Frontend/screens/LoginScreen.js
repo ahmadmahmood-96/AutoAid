@@ -21,36 +21,16 @@ export default function LoginScreen({ navigation }) {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
 
-  useEffect(() => {
-    const checkLoginStatus = async () => {
-      try {
-        const token = await AsyncStorage.getItem("authToken");
-        const userRole = await AsyncStorage.getItem("userRole");
-
-        if (token && userRole && userRole === "VehicleOwner")
-          navigation.navigate("VehicleOwnerHomeScreen");
-        else if (token && userRole && userRole === "WorkshopOwner")
-          navigation.navigate("WorkshopOwnerHomeScreen");
-        else if (token && userRole && userRole === "ServiceProvider")
-          navigation.navigate("ServiceProviderHomeScreen");
-      } catch (error) {
-        console.log(error.message);
-      }
-    };
-    checkLoginStatus();
-  }, []);
-
   const handleLoginPress = async () => {
     let errorMessage = "";
 
     if (!email || !password) {
       errorMessage = "All fields are required.";
+    } else if (!validateEmail(email)) {
+      errorMessage = "Invalid email format.";
+    } else if (!validatePassword(password)) {
+      errorMessage = "Password is not in proper format.";
     }
-    // else if (!validateEmail(email)) {
-    //   errorMessage = "Invalid email format.";
-    // } else if (!validatePassword(password)) {
-    //   errorMessage = "Password is not in proper format.";
-    // }
 
     setError(errorMessage);
     if (!errorMessage) {
@@ -62,7 +42,7 @@ export default function LoginScreen({ navigation }) {
 
         // Make a POST request to the login API endpoint
         const response = await axios.post(
-          `http://192.168.100.68:8080/api/login`,
+          `http://192.168.1.139:8080/api/login`,
           loginData
         );
 
@@ -72,7 +52,6 @@ export default function LoginScreen({ navigation }) {
         const userRole = response.data.role;
         AsyncStorage.setItem("authToken", response.data.token);
         AsyncStorage.setItem("userRole", userRole);
-        console.log(token);
         if (userRole === "VehicleOwner")
           navigation.navigate("VehicleOwnerHomeScreen");
         else if (userRole === "WorkshopOwner")
@@ -168,9 +147,13 @@ export default function LoginScreen({ navigation }) {
                 value={password}
                 onChangeText={setPassword} // Updating the password state
               />
-              <Pressable onPress={onPressForgotPassword}>
-                <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
-              </Pressable>
+              <View style={{ alignSelf: "flex-end", margin: 5 }}>
+                <Pressable onPress={onPressForgotPassword}>
+                  <Text style={styles.forgotPasswordText}>
+                    Forgot Password?
+                  </Text>
+                </Pressable>
+              </View>
 
               {error ? (
                 <View style={styles.errorContainer}>

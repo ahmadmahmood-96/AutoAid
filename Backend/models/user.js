@@ -13,6 +13,12 @@ const userSchema = new mongoose.Schema({
     },
     phoneNumber: {
         type: String
+    },
+    otp: {
+        type: Number,
+    },
+    isVerified: {
+        type: Boolean,
     }
 });
 
