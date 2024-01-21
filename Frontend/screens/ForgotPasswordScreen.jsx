@@ -1,3 +1,5 @@
+const baseUrl = process.env.BASE_URL;
+
 import React, { useState } from "react";
 import {
   View,
@@ -8,6 +10,7 @@ import {
   Keyboard,
   StyleSheet,
   StatusBar,
+  Alert,
 } from "react-native";
 import { TextInput } from "react-native-paper";
 import axios from "axios";
@@ -18,6 +21,7 @@ const ForgotPasswordScreen = ({ navigation }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [otp, setOtp] = useState(0);
   const [showFields, setShowFields] = useState(false);
   const [isModalVisible, setModalVisibility] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -28,14 +32,6 @@ const ForgotPasswordScreen = ({ navigation }) => {
     let errorMessage = "";
     if (!email) {
       errorMessage = "All fields are required.";
-    } else if (showFields) {
-      if (!password || !confirmPassword) {
-        errorMessage = "All fields are required.";
-      } else if (!validatePassword(password)) {
-        errorMessage = "Password is not in proper format.";
-      } else if (password !== confirmPassword) {
-        errorMessage = "Passwords do not match.";
-      }
     } else if (!validateEmail(email)) {
       errorMessage = "Invalid email format.";
     }
@@ -48,12 +44,13 @@ const ForgotPasswordScreen = ({ navigation }) => {
         };
         // Make a POST request to the login API endpoint
         const response = await axios.post(
-          `http://192.168.1.139:8080/api/verify-email`,
+          `${baseUrl}auth/verify-email`,
           userEmail
         );
-
-        console.log(response.data.message);
-        setModalVisibility(true);
+        if (response.status === 201) {
+          setOtp(response.data.otp);
+          setModalVisibility(true);
+        } else setError(response.data.message);
       } catch (e) {
         // Handle login errors
         if (e.response && e.response.data && e.response.data.message) {
@@ -69,41 +66,50 @@ const ForgotPasswordScreen = ({ navigation }) => {
   };
 
   const handleChangePassword = async () => {
-    try {
-      await axios.post(`http://192.168.1.139:8080/api/change-password`, {
-        email,
-        password,
-      });
+    let errorMessage = "";
+    if (!password || !confirmPassword) {
+      errorMessage = "All fields are required.";
+    } else if (!validatePassword(password)) {
+      errorMessage = "Password is not in proper format.";
+    } else if (password !== confirmPassword) {
+      errorMessage = "Passwords do not match.";
+    }
 
-      navigation.navigate("LoginScreen");
-
-      // If verification is successful, navigate to the login screen
-    } catch (e) {
-      // Handle errors during verification
-      if (e.response && e.response.data && e.response.data.message) {
-        setError(e.response.data.message);
-      } else {
-        setError("Failed to verify OTP. Please try again.");
+    setError(errorMessage);
+    if (!errorMessage) {
+      try {
+        await axios.post(`${baseUrl}auth/change-password`, {
+          email,
+          password,
+        });
+        Alert.alert(
+          "Password Changed",
+          "Your password is successfully updated",
+          ["Ok"]
+        );
+        navigation.navigate("LoginScreen");
+        // If verification is successful, navigate to the login screen
+      } catch (e) {
+        // Handle errors during verification
+        if (e.response && e.response.data && e.response.data.message) {
+          setError(e.response.data.message);
+        } else {
+          setError("Failed to verify OTP. Please try again.");
+        }
       }
     }
   };
 
   const verifyOtp = async (otp) => {
-    try {
-      const otpNumber = parseInt(otp, 10);
-      await axios.post(`http://192.168.1.139:8080/api/verify`, {
-        email,
-        otpNumber,
-      });
+    const otpNumber = parseInt(otp, 10);
+    if (otp == otpNumber) {
+      console.log(otp);
       setShowFields(true);
       // If verification is successful, navigate to the login screen
-    } catch (e) {
-      // Handle errors during verification
-      if (e.response && e.response.data && e.response.data.message) {
-        setError(e.response.data.message);
-      } else {
-        setError("Failed to verify OTP. Please try again.");
-      }
+      setModalVisibility(false);
+    } else {
+      setError("Wrong OTP entered");
+      setModalVisibility(false);
     }
   };
 
@@ -131,6 +137,9 @@ const ForgotPasswordScreen = ({ navigation }) => {
         <View style={styles.container}>
           <StatusBar barStyle="auto" />
           <View style={styles.headerContainer}>
+            <TouchableOpacity onPress={() => navigation.goBack()}>
+              <Text>Back</Text>
+            </TouchableOpacity>
             <View style={styles.headerBox}>
               <Text style={styles.headerBoxText}>Need Help?</Text>
               <Text style={styles.headerBoxTextHeading}>
@@ -144,23 +153,38 @@ const ForgotPasswordScreen = ({ navigation }) => {
               Enter your email to reset your password.
             </Text>
 
-            <Text style={styles.inputLabel}>Email Address</Text>
-            <TextInput
-              mode="outlined"
-              style={styles.textInput}
-              placeholder="Enter your email"
-              keyboardType="email-address"
-              value={email}
-              onChangeText={setEmail}
-            />
-
-            {showFields ? (
-              <View>
-                <Text style={styles.inputLabel}>Password</Text>
+            {!showFields ? (
+              <>
+                <Text style={styles.inputLabel}>Email Address</Text>
                 <TextInput
                   mode="outlined"
                   style={styles.textInput}
-                  placeholder="Enter your password"
+                  placeholder="Enter your email"
+                  autoCapitalize="none"
+                  keyboardType="email-address"
+                  value={email.trim()}
+                  onChangeText={setEmail}
+                />
+                {error ? (
+                  <View style={styles.errorContainer}>
+                    <Icon name="exclamation-circle" size={18} color="red" />
+                    <Text style={styles.errorText}>{error}</Text>
+                  </View>
+                ) : null}
+                <TouchableOpacity
+                  style={styles.login}
+                  onPress={handleForgotPassword}
+                >
+                  <Text style={styles.loginButtonText}>Verify</Text>
+                </TouchableOpacity>
+              </>
+            ) : (
+              <>
+                <Text style={styles.inputLabel}>New Password</Text>
+                <TextInput
+                  mode="outlined"
+                  style={styles.textInput}
+                  placeholder="Enter your new password"
                   secureTextEntry={!showPassword}
                   right={
                     <TextInput.Icon
@@ -187,37 +211,27 @@ const ForgotPasswordScreen = ({ navigation }) => {
                   value={confirmPassword}
                   onChangeText={setConfirmPassword} // Updating the password state
                 />
-              </View>
-            ) : null}
+                {error ? (
+                  <View style={styles.errorContainer}>
+                    <Icon name="exclamation-circle" size={18} color="red" />
+                    <Text style={styles.errorText}>{error}</Text>
+                  </View>
+                ) : null}
+                <TouchableOpacity
+                  style={styles.login}
+                  onPress={handleChangePassword}
+                >
+                  <Text style={styles.loginButtonText}>Reset Password</Text>
+                </TouchableOpacity>
+              </>
+            )}
 
-            {error ? (
-              <View style={styles.errorContainer}>
-                <Icon name="exclamation-circle" size={18} color="red" />
-                <Text style={styles.errorText}>{error}</Text>
-              </View>
-            ) : null}
-
-            <TouchableOpacity
-              style={styles.login}
-              onPress={handleForgotPassword}
-            >
-              <Text style={styles.loginButtonText}>Verify</Text>
-              <OTPVerificationModal
-                isVisible={isModalVisible}
-                onConfirm={verifyOtp}
-                onCancel={() => setModalVisibility(false)}
-                email={email} // Pass the email to the modal for display
-              />
-            </TouchableOpacity>
-
-            {showFields ? (
-              <TouchableOpacity
-                style={styles.login}
-                onPress={handleChangePassword}
-              >
-                <Text style={styles.loginButtonText}>Reset Password</Text>
-              </TouchableOpacity>
-            ) : null}
+            <OTPVerificationModal
+              isVisible={isModalVisible}
+              onConfirm={verifyOtp}
+              onCancel={() => setModalVisibility(false)}
+              email={email} // Pass the email to the modal for display
+            />
           </View>
         </View>
       </TouchableWithoutFeedback>
@@ -244,7 +258,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#ffffff",
     width: "100%",
     alignItems: "center",
-    // justifyContent: "center",
     borderTopLeftRadius: 25,
     borderTopRightRadius: 25,
   },

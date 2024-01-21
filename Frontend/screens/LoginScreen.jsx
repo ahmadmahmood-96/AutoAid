@@ -1,4 +1,8 @@
-import React, { useEffect, useState } from "react";
+const baseUrl = process.env.BASE_URL;
+
+import React, { useState } from "react";
+import { useFocusEffect } from "@react-navigation/native";
+
 import {
   StyleSheet,
   View,
@@ -21,6 +25,16 @@ export default function LoginScreen({ navigation }) {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
 
+  const clearValue = () => {
+    setError("");
+  };
+
+  useFocusEffect(
+    React.useCallback(() => {
+      clearValue();
+    }, [])
+  );
+
   const handleLoginPress = async () => {
     let errorMessage = "";
 
@@ -41,10 +55,7 @@ export default function LoginScreen({ navigation }) {
         };
 
         // Make a POST request to the login API endpoint
-        const response = await axios.post(
-          `http://192.168.1.139:8080/api/login`,
-          loginData
-        );
+        const response = await axios.post(`${baseUrl}auth/login`, loginData);
 
         // Reset the login form fields
         setEmail("");
@@ -65,7 +76,6 @@ export default function LoginScreen({ navigation }) {
           setError(e.response.data.message);
         } else {
           // For other types of errors, use a generic error message
-          console.log(e);
           setError("Failed to log in. Please try again.");
         }
       }
@@ -127,8 +137,9 @@ export default function LoginScreen({ navigation }) {
                 mode="outlined"
                 style={styles.textInput}
                 placeholder="Enter your email"
+                autoCapitalize="none"
                 keyboardType="email-address"
-                value={email}
+                value={email.trim()}
                 onChangeText={setEmail} // Updating the email state
               />
 

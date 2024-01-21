@@ -18,24 +18,40 @@ export default function App() {
         initialRouteName="LandingPage"
         screenOptions={{ headerShown: false }}
       >
-        <Stack.Screen name="LandingPage" component={LandingPage} />
-        <Stack.Screen name="LoginScreen" component={LoginScreen} />
+        <Stack.Screen
+          name="LandingPage"
+          component={LandingPage}
+          options={{ gestureEnabled: false }}
+        />
+        <Stack.Screen
+          name="LoginScreen"
+          component={LoginScreen}
+          options={{ gestureEnabled: false }}
+        />
         <Stack.Screen
           name="ForgotPasswordScreen"
           component={ForgotPasswordScreen}
+          options={{ gestureEnabled: false }}
         />
-        <Stack.Screen name="RegisterScreen" component={RegisterScreen} />
+        <Stack.Screen
+          name="RegisterScreen"
+          component={RegisterScreen}
+          options={{ gestureEnabled: false }}
+        />
         <Stack.Screen
           name="VehicleOwnerHomeScreen"
           component={VehicleOwnerHomeScreen}
+          options={{ gestureEnabled: false }}
         />
         <Stack.Screen
           name="WorkshopOwnerHomeScreen"
           component={WorkshopOwnerHomeScreen}
+          options={{ gestureEnabled: false }}
         />
         <Stack.Screen
           name="ServiceProviderHomeScreen"
           component={ServiceProviderHomeScreen}
+          options={{ gestureEnabled: false }}
         />
       </Stack.Navigator>
       <StatusBar style="auto" />

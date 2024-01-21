@@ -36,6 +36,7 @@ const OTPVerificationModal = ({ isVisible, onConfirm, onCancel, email }) => {
     }
     // Here, send the OTP back to the parent component for verification
     onConfirm(otp.join(""));
+    setOtp(new Array(6).fill(""));
   };
 
   return (

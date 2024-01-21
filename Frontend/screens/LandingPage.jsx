@@ -3,9 +3,12 @@ import { useEffect } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function LandingPage({ navigation }) {
+  const delay = async () => new Promise((resolve) => setTimeout(resolve, 3000));
+
   useEffect(() => {
     const checkLoginStatus = async () => {
       try {
+        await delay();
         const token = await AsyncStorage.getItem("authToken");
         const userRole = await AsyncStorage.getItem("userRole");
 

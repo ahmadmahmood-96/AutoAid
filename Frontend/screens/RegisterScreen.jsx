@@ -1,5 +1,9 @@
+const baseUrl = process.env.BASE_URL;
+
 import React from "react";
 import { useState } from "react";
+import { useFocusEffect } from "@react-navigation/native";
+
 import {
   StyleSheet,
   View,
@@ -33,6 +37,16 @@ export default function RegisterScreen({ navigation }) {
   const [isModalVisible, setModalVisibility] = useState(false);
   const [error, setError] = useState("");
 
+  const clearValue = () => {
+    setError("");
+  };
+
+  useFocusEffect(
+    React.useCallback(() => {
+      clearValue();
+    }, [])
+  );
+
   const handleRegisterPress = async () => {
     let errorMessage = "";
 
@@ -63,12 +77,7 @@ export default function RegisterScreen({ navigation }) {
         };
         console.log(data);
         // Make a POST request to the backend API
-        const response = await axios.post(
-          `http://192.168.1.139:8080/api/register`,
-          data
-        );
-
-        console.log("API Response:", response.data);
+        await axios.post(`${baseUrl}auth/register`, data);
 
         // Reset the form fields if needed
         setName("");
@@ -80,7 +89,6 @@ export default function RegisterScreen({ navigation }) {
         setWorkshopAddress("");
         setLicenseNumber("");
         setModalVisibility(true);
-        // navigation.navigate("LoginScreen");
       } catch (e) {
         // Handle login errors
         if (e.response && e.response.data && e.response.data.message) {
@@ -98,12 +106,10 @@ export default function RegisterScreen({ navigation }) {
   const verifyOtp = async (otp) => {
     try {
       const otpNumber = parseInt(otp, 10);
-      await axios.post(`http://192.168.1.139:8080/api/verify`, {
+      await axios.post(`${baseUrl}auth/verify`, {
         email,
         otpNumber,
       });
-      console.log("hi");
-      console.log(email);
 
       // If verification is successful, navigate to the login screen
       navigation.navigate("LoginScreen");
@@ -251,8 +257,9 @@ export default function RegisterScreen({ navigation }) {
                   mode="outlined"
                   style={styles.textInput}
                   placeholder="Enter your email"
+                  autoCapitalize="none"
                   keyboardType="email-address"
-                  value={email}
+                  value={email.trim()}
                   onChangeText={setEmail} // Updating the email state
                 />
 
@@ -413,7 +420,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     overflow: "hidden",
-    paddingTop: 60,
+    paddingTop: 110,
     paddingBottom: 60,
   },
   bodyContainer: {
@@ -433,6 +440,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     width: "85%",
+    marginBottom: 50,
   },
   headerBoxText: {
     fontSize: 16,
@@ -486,7 +494,7 @@ const styles = StyleSheet.create({
   title: {
     paddingTop: 20,
     alignSelf: "flex-start",
-    fontSize: 20,
+    fontSize: 24,
     fontWeight: "bold",
     marginLeft: 20,
     marginBottom: 10,
