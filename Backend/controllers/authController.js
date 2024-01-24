@@ -169,37 +169,73 @@ exports.verifyOTP = async (req, res) => {
     }
 };
 
-exports.loginUser = async (req, res) => {
-    const {
-        email,
-        password
-    } = req.body;
-    const user = await userModel.User.findOne({
-        email
-    });
-
-    if (!user) {
-        return res.status(401).json({
-            message: 'User does not exist'
-        });
-    }
-
-    // Check if the password matches (You should use a proper password hashing library for security)
-    if (user.password !== password) {
-        return res.status(401).json({
-            message: 'Invalid Password'
-        });
-    }
-
+const generateAndSendToken = (res, user, role) => {
     const secretKey = generateSecretKey();
     const token = jwt.sign({
-        userId: user._id
+        user: user
     }, secretKey);
 
     // Successful login
     return res.status(200).json({
-        message: "Login Successful",
+        message: `${role} Login Successful`,
         role: user.__t,
         token: token,
     });
+};
+
+exports.loginUser = async (req, res) => {
+    const origin = req.get('Origin');
+    const {
+        email,
+        password
+    } = req.body;
+
+    if (origin === "http://localhost:3000" || origin === `${process.env.BASE_URL}`) {
+        // Handle login for Admin
+        const user = await userModel.User.findOne({
+            email,
+            __t: "Admin"
+        });
+
+        if (!user) {
+            return res.status(401).json({
+                message: 'Admin does not exist'
+            });
+        }
+
+        // Check if the password matches (You should use a proper password hashing library for security)
+        if (user.password !== password) {
+            return res.status(401).json({
+                message: 'Invalid Password'
+            });
+        }
+
+        // Common logic for both cases
+        return generateAndSendToken(res, user, "Admin");
+    } else {
+        // Handle login for other users (non-Admin)
+        const user = await userModel.User.findOne({
+            email,
+            __t: {
+                $ne: "Admin"
+            } // Use $ne (not equal) to find users other than Admin
+        });
+
+
+        if (!user) {
+            return res.status(401).json({
+                message: 'User does not exist'
+            });
+        }
+
+        // Check if the password matches (You should use a proper password hashing library for security)
+        if (user.password !== password) {
+            return res.status(401).json({
+                message: 'Invalid Password'
+            });
+        }
+
+        // Common logic for both cases
+        return generateAndSendToken(res, user, user.__t);
+    }
 };
