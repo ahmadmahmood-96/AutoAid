@@ -19,6 +19,7 @@ export default function Login() {
   const navigate = useNavigate();
   useEffect(() => {
     document.title = "AutoAid - Login";
+    if (localStorage.getItem("token")) navigate("/home");
   }, []);
 
   const [email, setEmail] = useState("");
@@ -31,19 +32,19 @@ export default function Login() {
         localStorage.setItem("token", response.data.token);
         localStorage.setItem("role", response.data.role);
         message.success(response.data.message);
+        setEmail("");
+        setPassword("");
+
+        // Navigate to the home page after successful login
+        navigate("/home", { replace: true });
       } else if (response.data.role !== "Admin") {
         message.error("Invalid User!");
       }
-      setEmail("");
-      setPassword("");
-      navigate("/home");
     } catch (e) {
       // Handle login errors
       if (e.response && e.response.data && e.response.data.message) {
-        // Use the custom error message from the backend
         message.error(e.response.data.message);
       } else if (!axios.isCancel(e)) {
-        // Check if the error is not a canceled request
         message.error("Failed to log in. Please try again");
       }
     }
