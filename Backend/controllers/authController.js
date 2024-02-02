@@ -3,9 +3,6 @@ const crypto = require("crypto");
 const {
     sendVerificationEmail
 } = require("../utils/sendVerificationEmail");
-const {
-    generateSecretKey
-} = require("../utils/generateSecretKey");
 
 // Import your user models
 const userModel = require("../models/user");
@@ -170,10 +167,9 @@ exports.verifyOTP = async (req, res) => {
 };
 
 const generateAndSendToken = (res, user, role) => {
-    const secretKey = generateSecretKey();
     const token = jwt.sign({
         user: user
-    }, secretKey);
+    }, process.env.SECRET_KEY);
 
     // Successful login
     return res.status(200).json({

@@ -9,14 +9,16 @@ import { useNavigate } from "react-router-dom";
 import { decodeToken } from "../utils/jwtUtils";
 
 const HeaderComponent = ({ collapsed, handleToggle }) => {
+  const [name, setName] = useState("");
+  const navigate = useNavigate();
+
   useEffect(() => {
     if (localStorage.getItem("token")) {
       const { name } = decodeToken(localStorage.getItem("token"));
       setName(name);
     }
-  });
-  const [name, setName] = useState("");
-  const navigate = useNavigate();
+  }, [name, navigate]);
+
   return (
     <header style={headerStyle}>
       <Space size="large">

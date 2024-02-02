@@ -20,7 +20,7 @@ export default function Login() {
   useEffect(() => {
     document.title = "AutoAid - Login";
     if (localStorage.getItem("token")) navigate("/home");
-  }, []);
+  });
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");

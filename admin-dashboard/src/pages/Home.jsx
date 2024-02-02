@@ -16,7 +16,6 @@ const Home = () => {
   };
 
   const isAuthenticated = () => {
-    console.log(!!localStorage.getItem("token"));
     return !!localStorage.getItem("token"); // Return true if token exists
   };
 
@@ -53,12 +52,8 @@ const Home = () => {
 
 const layoutStyle = {
   overflow: "hidden",
-  width: "100vw",
-};
-
-const contentStyle = {
-  backgroundColor: "#f7f7f7",
-  padding: 10,
+  width: "100%",
+  minHeight: "100vh", // Set the minimum height of the layout to fill the screen
 };
 
 const siderStyle = {
@@ -66,7 +61,14 @@ const siderStyle = {
   lineHeight: "120px",
   color: "#fff",
   backgroundColor: "#DDF2FD",
-  height: "calc(100vh - 110px)", // Adjusted height to fill the remaining space
+  // height: "calc(100vh - 110px)", // Remove fixed height
+  height: "inherit", // Set the height to 100% to fill the container
+};
+
+const contentStyle = {
+  backgroundColor: "#f7f7f7",
+  padding: 10,
+  height: "100%", // Set the height to 100% to fill the container
 };
 
 export default Home;
