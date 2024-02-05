@@ -1,5 +1,7 @@
 const Product = require('../models/product');
 const multer = require('multer');
+const fs = require('fs');
+const path = require('path');
 
 // Set up Multer for handling file uploads
 const storage = multer.diskStorage({
@@ -63,6 +65,66 @@ exports.getAllProducts = async (req, res) => {
     } catch (error) {
         res.status(500).json({
             message: 'Internal Server Error'
+        });
+    }
+};
+
+exports.deleteProduct = async (req, res) => {
+    try {
+        const {
+            productId
+        } = req.params;
+
+        const product = await Product.findById(productId);
+
+        if (!product) {
+            return res.status(404).json({
+                success: false,
+                error: 'Product not found'
+            });
+        }
+        // Perform deletion in the database
+        await Product.findByIdAndDelete(productId);
+
+        // Delete corresponding images from the "uploads" folder
+        product.images.forEach((image) => {
+            const imagePath = path.join(__dirname, '..', 'images', image.filename);
+            fs.unlinkSync(imagePath);
+        });
+
+        res.json({
+            success: true,
+            message: 'Product deleted successfully'
+        });
+    } catch (error) {
+        res.json({
+            success: false,
+            error: 'Internal Server Error'
+        });
+    }
+};
+
+exports.editProduct = async (req, res) => {
+    try {
+        const productId = req.params.productId;
+        const updatedProductData = req.body;
+        const updatedProduct = await Product.findByIdAndUpdate(
+            productId, {
+                $set: updatedProductData
+            }, {
+                new: true
+            }
+        );
+        if (!updatedProduct) {
+            res.json({
+                message: 'Product not found'
+            });
+        } else res.status(201).json({
+            message: 'Product updated successfully'
+        });
+    } catch (error) {
+        res.json({
+            error: 'Error updating product'
         });
     }
 };

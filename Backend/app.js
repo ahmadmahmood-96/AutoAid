@@ -10,6 +10,10 @@ mongoose.set("strictQuery", false);
 // Importing Routes
 const authRoutes = require("./routes/authRoutes");
 const productRoutes = require("./routes/productRoutes");
+const adminRoutes = require("./routes/adminRoutes");
+
+// Importing Verifying Token Middleware
+const verifyToken = require("./middleware/verify");
 
 // Middleware
 app.use(cors());
@@ -32,6 +36,7 @@ mongoose
 // Routes
 app.use('/auth', authRoutes);
 app.use('/product', productRoutes);
+app.use('/admin', verifyToken, adminRoutes);
 
 app.get('/', (req, res) => {
     res.send(`<h2>Hello</h2>`);

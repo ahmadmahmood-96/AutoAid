@@ -44,8 +44,8 @@ const AddProduct = () => {
       );
       if (response.status === 201) {
         setProductName("");
-        setPrice(null);
-        setQuantity(null);
+        setPrice();
+        setQuantity();
         setDescription("");
         setProductImages([]);
         message.success(response.data.message);
@@ -122,7 +122,7 @@ const AddProduct = () => {
           <InputNumber
             placeholder="Enter Product Price"
             value={price}
-            onChange={(e) => setPrice(e.target.value)}
+            onChange={(value) => setPrice(value)}
             style={{ width: "100%" }}
           />
         </Form.Item>
@@ -146,7 +146,7 @@ const AddProduct = () => {
           <InputNumber
             placeholder="Enter Product Quantity"
             value={quantity}
-            onChange={(e) => setQuantity(e.target.value)}
+            onChange={(value) => setPrice(value)}
             style={{ width: "100%" }}
           />
         </Form.Item>
@@ -173,11 +173,11 @@ const AddProduct = () => {
           name="image"
           valuePropName="fileList"
           getValueFromEvent={normFile}
-          extra="Please upload an image for the product"
+          extra="Please upload image(s) for the product"
           rules={[
             {
               required: true,
-              message: "Please upload an image of the product",
+              message: "Please upload image(s) of the product",
             },
           ]}
         >

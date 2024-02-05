@@ -90,13 +90,13 @@ exports.verifyEmail = async (req, res) => {
     });
 
     if (!user) {
-        return res.status(401).json({
+        return res.json({
             message: 'User does not exist'
         });
     }
 
     if (!user.isVerified) {
-        return res.status(401).json({
+        return res.json({
             message: 'Email not Verified'
         });
     }
@@ -105,7 +105,7 @@ exports.verifyEmail = async (req, res) => {
     await sendVerificationEmail(email, otp);
     return res.status(201).json({
         otp: otp,
-        message: 'OTP sent'
+        message: 'OTP sent to your email'
     });
 };
 
@@ -120,7 +120,7 @@ exports.changePassword = async (req, res) => {
 
     // Check if user exists
     if (!user) {
-        return res.status(404).json({
+        return res.json({
             message: 'User not found.'
         });
     }
@@ -146,23 +146,29 @@ exports.verifyOTP = async (req, res) => {
         });
 
         if (!user) {
-            return res.status(404).send('User not found.');
+            return res.send('User not found.');
         }
 
         user.isVerified = true;
         // Check if the OTP matches
         if (user.otp == otpNumber) {
+            await userModel.User.updateOne({
+                email
+            }, {
+                $unset: {
+                    otp: 1
+                }
+            });
             res.status(200).json({
                 message: 'Account verified successfully!'
             });
         } else {
-            res.status(400).json({
+            res.json({
                 message: 'Invalid OTP. Please try again.'
             });
         }
     } catch (error) {
-        console.error('Error during OTP verification:', error);
-        res.status(500).send('An error occurred during verification.');
+        res.send('An error occurred during verification.');
     }
 };
 
@@ -194,14 +200,14 @@ exports.loginUser = async (req, res) => {
         });
 
         if (!user) {
-            return res.status(401).json({
+            return res.json({
                 message: 'Admin does not exist'
             });
         }
 
         // Check if the password matches (You should use a proper password hashing library for security)
         if (user.password !== password) {
-            return res.status(401).json({
+            return res.json({
                 message: 'Invalid Password'
             });
         }
@@ -219,14 +225,14 @@ exports.loginUser = async (req, res) => {
 
 
         if (!user) {
-            return res.status(401).json({
+            return res.json({
                 message: 'User does not exist'
             });
         }
 
         // Check if the password matches (You should use a proper password hashing library for security)
         if (user.password !== password) {
-            return res.status(401).json({
+            return res.json({
                 message: 'Invalid Password'
             });
         }

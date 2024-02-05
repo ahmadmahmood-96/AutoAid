@@ -1,18 +1,133 @@
-import { Button } from "antd";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { Statistic, Typography, Card, Row, Col, message } from "antd";
+import CountUp from "react-countup";
+import axios from "axios";
+
+const baseUrl = process.env.REACT_APP_BASE_URL;
+
+const formatter = (value) => <CountUp end={value} separator="," />;
+
 export default function Dashboard() {
-  const navigate = useNavigate();
-  const handleLogout = () => {
-    // Clear localStorage
-    localStorage.clear();
-    navigate("/");
-  };
+  const [totalVehicleOwners, setTotalVehicleOwners] = useState(0);
+  const [totalServiceProviders, setTotalServiceProviders] = useState(0);
+  const [totalWorkshopOwners, setTotalWorkshopOwners] = useState(0);
+  const [totalProducts, setTotalProducts] = useState(0);
+
+  useEffect(() => {
+    axios
+      .get(`${baseUrl}admin/total-vehicle-owners`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      })
+      .then((response) => {
+        setTotalVehicleOwners(response.data.totalVehicleOwners);
+      })
+      .catch((error) => {
+        message.error("Error fetching records:", error);
+      });
+
+    axios
+      .get(`${baseUrl}admin/total-service-providers`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      })
+      .then((response) => {
+        setTotalServiceProviders(response.data.totalServiceProviders);
+      })
+      .catch((error) => {
+        message.error("Error fetching records:", error);
+      });
+
+    axios
+      .get(`${baseUrl}admin/total-workshop-owners`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      })
+      .then((response) => {
+        setTotalWorkshopOwners(response.data.totalWorkshopOwners);
+      })
+      .catch((error) => {
+        message.error("Error fetching records:", error);
+      });
+
+    axios
+      .get(`${baseUrl}admin/total-products`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      })
+      .then((response) => {
+        setTotalProducts(response.data.totalProducts);
+      })
+      .catch((error) => {
+        message.error("Error fetching records:", error);
+      });
+  }, []);
   return (
     <>
-      <h1>Dashboard</h1>
-      <Button type="primary" onClick={handleLogout}>
-        Logout
-      </Button>
+      <Typography.Title level={2}>Dashboard</Typography.Title>
+      <Row gutter={[16, 16]} wrap>
+        <Col span={6} xxl={6} xl={6} lg={6} md={6} sm={12} xs={24}>
+          <Card bordered={false}>
+            <Statistic
+              title="Number of Vehicle Owners"
+              value={totalVehicleOwners}
+              valueStyle={styles}
+              formatter={formatter}
+            />
+          </Card>
+        </Col>
+        <Col span={6} xxl={6} xl={6} lg={6} md={6} sm={12} xs={24}>
+          <Card bordered={false}>
+            <Statistic
+              title="Number of Service Providers"
+              value={totalServiceProviders}
+              valueStyle={styles}
+              formatter={formatter}
+            />
+          </Card>
+        </Col>
+        <Col span={6} xxl={6} xl={6} lg={6} md={6} sm={12} xs={24}>
+          <Card bordered={false}>
+            <Statistic
+              title="Number of Workshop Owners"
+              value={totalWorkshopOwners}
+              valueStyle={styles}
+              formatter={formatter}
+            />
+          </Card>
+        </Col>
+        <Col span={6} xxl={6} xl={6} lg={6} md={6} sm={12} xs={24}>
+          <Card bordered={false}>
+            <Statistic
+              title="Number of Products"
+              value={totalProducts}
+              valueStyle={styles}
+              formatter={formatter}
+            />
+          </Card>
+        </Col>
+        <Col span={6} xxl={6} xl={6} lg={6} md={6} sm={12} xs={24}>
+          <Card bordered={false}>
+            <Statistic
+              title="Total Number of Orders"
+              value={37}
+              valueStyle={styles}
+              formatter={formatter}
+            />
+          </Card>
+        </Col>
+        <Col span={6} xxl={6} xl={6} lg={6} md={6} sm={12} xs={24}>
+          <Card bordered={false}>
+            <Statistic
+              title="Orders Dispatched"
+              value={83}
+              valueStyle={styles}
+              formatter={formatter}
+            />
+          </Card>
+        </Col>
+      </Row>
     </>
   );
 }
+
+const styles = {
+  color: "#50ab00",
+  fontSize: 30,
+};

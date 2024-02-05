@@ -81,9 +81,7 @@ export default function Login() {
             paddingRight: 40,
           }}
         >
-          <Typography.Title level={2} style={{ fontWeight: "bold" }}>
-            Login
-          </Typography.Title>
+          <Typography.Title level={2}>Login</Typography.Title>
           <Form
             layout="vertical"
             name="basic"
@@ -137,7 +135,14 @@ export default function Login() {
               />
             </Form.Item>
 
-            <Typography.Text>Forgot Password?</Typography.Text>
+            <Typography.Link
+              href="/forgot-password"
+              style={{
+                color: "#008b0e",
+              }}
+            >
+              Forgot Password?
+            </Typography.Link>
 
             <Form.Item
               wrapperCol={{
