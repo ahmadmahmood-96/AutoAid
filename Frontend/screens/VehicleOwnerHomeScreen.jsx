@@ -1,57 +1,57 @@
-import {
-  StyleSheet,
-  View,
-  Text,
-  StatusBar,
-  TouchableOpacity,
-} from "react-native";
+import { createDrawerNavigator } from "@react-navigation/drawer";
+
+import { Ionicons } from "@expo/vector-icons";
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-export default function VehicleOwnerHomeScreen({ navigation }) {
-  const handleLogoutPress = async () => {
-    await AsyncStorage.removeItem("authToken");
-    await AsyncStorage.removeItem("userRole");
-    navigation.navigate("LoginScreen");
-  };
+import HomeScreen from "../VehicleOwnerScreens/HomeScreen";
+import ProductsScreen from "../VehicleOwnerScreens/ProductsScreen";
+import DrawerContent from "../components/DrawerContent";
 
+const Drawer = createDrawerNavigator();
+
+export default function VehicleOwnerHomeScreen({ navigation }) {
   return (
     <>
-      <View style={styles.container}>
-        <StatusBar barStyle="auto" />
-        <Text>Vehicle Owner Home Screen</Text>
-        <View>
-          <TouchableOpacity style={styles.logout} onPress={handleLogoutPress}>
-            <Text style={styles.logoutButtonText}>Logout</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
+      <Drawer.Navigator drawerContent={(props) => <DrawerContent {...props} />}>
+        <Drawer.Screen
+          name="Home"
+          component={HomeScreen}
+          options={{
+            headerTitle: "",
+            drawerActiveBackgroundColor: "#e4efe4",
+            drawerActiveTintColor: "#00BE00",
+            drawerInactiveTintColor: "#1d1d1d",
+            headerBackgroundContainerStyle: { display: "none" },
+            drawerLabelStyle: {
+              fontSize: 15,
+            },
+            headerTransparent: true,
+            drawerIcon: ({ color }) => (
+              <Ionicons name="home-outline" size={24} color={color} />
+            ),
+          }}
+        />
+        <Drawer.Screen
+          name="Buy Spare Parts"
+          component={ProductsScreen}
+          options={{
+            headerTitle: "",
+            drawerActiveBackgroundColor: "#e4efe4",
+            drawerActiveTintColor: "#00BE00",
+            drawerInactiveTintColor: "#1d1d1d",
+            headerBackgroundContainerStyle: { display: "none" },
+            drawerLabelStyle: {
+              fontSize: 15,
+            },
+            // headerTransparent: true,
+            headerTitleStyle: { fontSize: 18 },
+            drawerIcon: ({ color }) => (
+              <Ionicons name="cart-outline" size={24} color={color} />
+            ),
+          }}
+        />
+      </Drawer.Navigator>
     </>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    overflow: "hidden",
-  },
-  logout: {
-    height: 50,
-    width: "90%",
-    backgroundColor: "#00BE00",
-    borderRadius: 25,
-    paddingLeft: 50,
-    paddingRight: 50,
-    justifyContent: "center",
-    alignItems: "center",
-    marginTop: 10,
-    marginBottom: 10,
-  },
-  logoutButtonText: {
-    fontSize: 18,
-    color: "black",
-    fontWeight: "bold",
-  },
-});

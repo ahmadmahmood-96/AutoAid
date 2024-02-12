@@ -1,3 +1,4 @@
+import "react-native-gesture-handler";
 import React, { useState, useEffect } from "react";
 import { Modal, View, Text, StyleSheet } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
@@ -11,6 +12,7 @@ import VehicleOwnerHomeScreen from "./screens/VehicleOwnerHomeScreen";
 import ServiceProviderHomeScreen from "./screens/ServiceProviderHomeScreen";
 import WorkshopOwnerHomeScreen from "./screens/WorkshopOwnerHomeScreen";
 import ForgotPasswordScreen from "./screens/ForgotPasswordScreen";
+import ProductInfoScreen from "./VehicleOwnerScreens/ProductInfoScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -68,6 +70,11 @@ export default function App() {
         <Stack.Screen
           name="ServiceProviderHomeScreen"
           component={ServiceProviderHomeScreen}
+          options={{ gestureEnabled: false }}
+        />
+        <Stack.Screen
+          name="ProductInfoScreen"
+          component={ProductInfoScreen}
           options={{ gestureEnabled: false }}
         />
       </Stack.Navigator>
