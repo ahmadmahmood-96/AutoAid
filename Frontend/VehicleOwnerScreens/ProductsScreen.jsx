@@ -9,6 +9,7 @@ import {
   Pressable,
   TouchableOpacity,
   StatusBar,
+  ActivityIndicator,
 } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -17,12 +18,43 @@ import axios from "axios";
 const baseUrl = process.env.BASE_URL;
 
 export default function ProductScreen({ navigation }) {
+  const [searchText, setSearchText] = useState("");
   const [products, setProducts] = useState([]);
+  const [filteredProducts, setFilteredProducts] = useState([]);
   const [selectedButton, setSelectedButton] = useState("All");
+  const [loading, setLoading] = useState(true);
 
   const handleButtonPress = (button) => {
     setSelectedButton(button);
-    // Add any additional logic you want to perform on button press
+    switch (button) {
+      case "All":
+        setFilteredProducts(products); // Show all products
+        break;
+      case "Car":
+        setFilteredProducts(
+          products.filter((product) => product.category === button)
+        );
+        break;
+      case "Bike":
+        setFilteredProducts(
+          products.filter((product) => product.category === button)
+        );
+        break;
+      default:
+        setFilteredProducts([]); // Default to an empty array if no matching category
+    }
+  };
+
+  const handleSearch = (text) => {
+    setSearchText(text);
+    // Filter products based on the search text
+    setFilteredProducts(
+      products.filter(
+        (product) =>
+          product.productName.toLowerCase().includes(text.toLowerCase()) ||
+          product.description.toLowerCase().includes(text.toLowerCase())
+      )
+    );
   };
 
   useEffect(() => {
@@ -37,6 +69,10 @@ export default function ProductScreen({ navigation }) {
         })
         .catch((error) => {
           console.error("Error fetching products:", error);
+        })
+        .finally(() => {
+          setFilteredProducts(products);
+          setLoading(false);
         });
     }
     fetchData();
@@ -56,7 +92,12 @@ export default function ProductScreen({ navigation }) {
               color="#00BE00"
             />
             {/* Text Input with Search Icon */}
-            <TextInput style={styles.searchInput} placeholder="Search" />
+            <TextInput
+              style={styles.searchInput}
+              placeholder="Search"
+              value={searchText}
+              onChangeText={handleSearch}
+            />
           </View>
           <View style={styles.buttonContainer}>
             <TouchableOpacity
@@ -109,8 +150,10 @@ export default function ProductScreen({ navigation }) {
             </TouchableOpacity>
           </View>
           <View style={styles.rowContainer}>
-            {products.length > 0 ? (
-              products.map((product) => (
+            {loading ? (
+              <ActivityIndicator size="large" color="#00BE00" /> // Show loading indicator while data is being fetched
+            ) : filteredProducts.length > 0 ? (
+              filteredProducts.map((product) => (
                 <Pressable
                   style={styles.card}
                   key={product._id}
@@ -120,12 +163,13 @@ export default function ProductScreen({ navigation }) {
                       productName: product.productName,
                       price: product.price,
                       description: product.description,
+                      images: product.images,
                     })
                   }
                 >
                   <View style={styles.box}>
                     <Image
-                      source={require("../assets/icon.png")}
+                      source={{ uri: product.images[0].data }} // Assuming images are stored as URIs
                       style={styles.cardImage}
                     />
                     <View style={styles.cardProduct}>
@@ -234,7 +278,7 @@ const styles = StyleSheet.create({
   buyButton: {
     position: "absolute",
     bottom: -2,
-    left: 145,
+    left: 150,
     // marginLeft: 40,
     // marginBottom: 5,
   },

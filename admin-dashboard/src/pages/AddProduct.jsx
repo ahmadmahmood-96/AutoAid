@@ -7,49 +7,70 @@ import {
   Button,
   message,
   Typography,
+  Select,
 } from "antd";
 import axios from "axios";
 import { UploadOutlined } from "@ant-design/icons";
 
 const baseUrl = process.env.REACT_APP_BASE_URL;
 
+const { Option } = Select;
+
 const AddProduct = () => {
+  const [form] = Form.useForm();
   const [productName, setProductName] = useState("");
   const [price, setPrice] = useState();
   const [quantity, setQuantity] = useState();
+  const [category, setCategory] = useState("");
   const [description, setDescription] = useState("");
   const [productImages, setProductImages] = useState([]);
 
   const onFinish = async (values) => {
-    // Handle form submission
-    const formData = new FormData();
-    formData.append("productName", values.productName);
-    formData.append("price", values.price);
-    formData.append("quantity", values.quantity);
-    formData.append("description", values.description);
-    for (let i = 0; i < productImages.length; i++) {
-      formData.append(`images`, productImages[i]);
+    if (productImages.length > 5) {
+      message.error("You can only upload up to 5 images!");
+      return;
     }
 
+    const imageArray = productImages.map((image) => {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(image);
+        reader.onloadend = () => {
+          resolve(reader.result);
+        };
+        reader.onerror = reject;
+      });
+    });
+
     try {
+      const base64Images = await Promise.all(imageArray);
+
+      const requestData = {
+        productName: values.productName,
+        price: values.price,
+        quantity: values.quantity,
+        category: values.category,
+        description: values.description,
+        images: base64Images,
+      };
+
       const response = await axios.post(
         `${baseUrl}product/save-product`,
-        formData,
+        requestData,
         {
           headers: {
-            "Content-Type": "multipart/form-data",
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
         }
       );
+
       if (response.status === 201) {
-        setProductName("");
-        setPrice();
-        setQuantity();
-        setDescription("");
+        clearForm();
         setProductImages([]);
         message.success(response.data.message);
-      } else message.error(response.data.message);
+      } else {
+        message.error(response.data.message);
+      }
     } catch (error) {
       console.log("Error uploading product:", error);
       message.error("Failed to add product. Please try again.");
@@ -80,10 +101,16 @@ const AddProduct = () => {
     return e && e.fileList;
   };
 
+  const clearForm = () => {
+    form.resetFields(); // Reset form fields
+    setProductImages([]); // Clear the productImages state
+  };
+
   return (
     <>
       <Typography.Title level={2}>Add Product Information</Typography.Title>
       <Form
+        form={form}
         name="addProductForm"
         onFinish={onFinish}
         labelCol={{ span: 4 }}
@@ -99,6 +126,7 @@ const AddProduct = () => {
           <Input
             placeholder="Enter Product Name"
             value={productName}
+            allowClear
             onChange={(e) => setProductName(e.target.value)}
           />
         </Form.Item>
@@ -146,9 +174,29 @@ const AddProduct = () => {
           <InputNumber
             placeholder="Enter Product Quantity"
             value={quantity}
-            onChange={(value) => setPrice(value)}
+            onChange={(value) => setQuantity(value)}
             style={{ width: "100%" }}
           />
+        </Form.Item>
+
+        <Form.Item
+          name="category"
+          label="Category"
+          rules={[
+            {
+              required: true,
+            },
+          ]}
+        >
+          <Select
+            placeholder="Select a category"
+            value={category}
+            onChange={(value) => setCategory(value)}
+            allowClear
+          >
+            <Option value="Bike">Bike</Option>
+            <Option value="Car">Car</Option>
+          </Select>
         </Form.Item>
 
         <Form.Item
@@ -188,6 +236,12 @@ const AddProduct = () => {
             accept=".png, .jpeg, .jpg"
             beforeUpload={beforeUpload}
             customRequest={customRequest}
+            onRemove={(file) => {
+              // Remove the file from productImages state
+              setProductImages((prevImages) =>
+                prevImages.filter((image) => image.uid !== file.uid)
+              );
+            }}
           >
             <Button icon={<UploadOutlined />}>Upload Image</Button>
           </Upload>
@@ -196,6 +250,9 @@ const AddProduct = () => {
         <Form.Item wrapperCol={{ offset: 4, span: 10 }}>
           <Button type="primary" htmlType="submit">
             Add Product
+          </Button>
+          <Button style={{ marginLeft: 10 }} onClick={clearForm}>
+            Reset
           </Button>
         </Form.Item>
       </Form>

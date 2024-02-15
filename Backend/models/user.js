@@ -19,6 +19,9 @@ const userSchema = new mongoose.Schema({
     },
     isVerified: {
         type: Boolean,
+    },
+    isBlocked: {
+        type: Boolean,
     }
 });
 

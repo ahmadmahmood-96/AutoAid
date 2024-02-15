@@ -44,6 +44,16 @@ export default function ViewProduct() {
     },
     {
       key: 2,
+      title: "Category",
+      dataIndex: "category",
+      filters: [
+        { text: "Car", value: "Car" },
+        { text: "Bike", value: "Bike" },
+      ],
+      onFilter: (value, record) => record.category === value,
+    },
+    {
+      key: 3,
       title: "Price",
       dataIndex: "price",
       render: (text) => `Rs. ${text}`,
@@ -52,7 +62,7 @@ export default function ViewProduct() {
       },
     },
     {
-      key: 3,
+      key: 4,
       title: "Quantity",
       dataIndex: "quantity",
       sorter: (record1, record2) => {
@@ -60,12 +70,12 @@ export default function ViewProduct() {
       },
     },
     {
-      key: 4,
+      key: 5,
       title: "Description",
       dataIndex: "description",
     },
     {
-      key: 5,
+      key: 6,
       title: "Actions",
       render: (record) => {
         return (
@@ -108,7 +118,6 @@ export default function ViewProduct() {
                 products.filter((product) => product._id !== record._id)
               );
             } else {
-              console.log(response);
               message.error("Failed to delete product");
             }
           })

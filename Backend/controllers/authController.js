@@ -36,6 +36,7 @@ exports.registerUser = async (req, res) => {
                 password,
                 otp,
                 isVerified: false,
+                isBlocked: false,
                 vehicleType,
             });
         } else if (selectedRole === 'workshopOwner') {
@@ -46,6 +47,7 @@ exports.registerUser = async (req, res) => {
                 password,
                 otp,
                 isVerified: false,
+                isBlocked: false,
                 workshopName,
                 workshopAddress,
             });
@@ -57,6 +59,7 @@ exports.registerUser = async (req, res) => {
                 password,
                 otp,
                 isVerified: false,
+                isBlocked: false,
                 licenseNumber,
             });
         } else {
@@ -75,7 +78,7 @@ exports.registerUser = async (req, res) => {
         });
     } catch (error) {
         // Handle errors
-        res.status(500).json({
+        res.json({
             error: 'An error occurred while processing the request'
         });
     }
@@ -122,6 +125,12 @@ exports.changePassword = async (req, res) => {
     if (!user) {
         return res.json({
             message: 'User not found.'
+        });
+    }
+
+    if (user.isBlocked) {
+        return res.json({
+            message: 'You are blocked.'
         });
     }
 
@@ -227,6 +236,12 @@ exports.loginUser = async (req, res) => {
         if (!user) {
             return res.json({
                 message: 'User does not exist'
+            });
+        }
+
+        if (user.isBlocked) {
+            return res.json({
+                message: 'You are blocked.'
             });
         }
 

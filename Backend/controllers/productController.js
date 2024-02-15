@@ -1,21 +1,4 @@
 const Product = require('../models/product');
-const multer = require('multer');
-const fs = require('fs');
-const path = require('path');
-
-// Set up Multer for handling file uploads
-const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        cb(null, './images/'); // Define the directory for storing uploaded files
-    },
-    filename: function (req, file, cb) {
-        const uniqueSuffix = Date.now();
-        cb(null, uniqueSuffix + file.originalname); // Generate unique filenames
-    },
-});
-const upload = multer({
-    storage: storage
-});
 
 // Save product information
 exports.saveProduct = async (req, res) => {
@@ -25,19 +8,18 @@ exports.saveProduct = async (req, res) => {
             price,
             quantity,
             description,
+            category,
+            images // array of objects with filename and data properties
         } = req.body;
 
-        // Get array of image filenames from uploaded files
-        const filenames = req.files.map(file => file.filename);
-
-        // Create a new product instance
         const product = new Product({
             productName,
             price,
             quantity,
             description,
-            images: filenames.map(filename => ({
-                filename
+            category,
+            images: images.map(base64String => ({
+                data: base64String
             })),
         });
 
@@ -54,9 +36,6 @@ exports.saveProduct = async (req, res) => {
         });
     }
 };
-
-// Multer middleware for file uploads
-exports.uploadMiddleware = upload.array('images');
 
 exports.getAllProducts = async (req, res) => {
     try {
@@ -85,12 +64,6 @@ exports.deleteProduct = async (req, res) => {
         }
         // Perform deletion in the database
         await Product.findByIdAndDelete(productId);
-
-        // Delete corresponding images from the "uploads" folder
-        product.images.forEach((image) => {
-            const imagePath = path.join(__dirname, '..', 'images', image.filename);
-            fs.unlinkSync(imagePath);
-        });
 
         res.json({
             success: true,
