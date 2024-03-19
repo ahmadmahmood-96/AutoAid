@@ -13,6 +13,8 @@ import ServiceProviderHomeScreen from "./screens/ServiceProviderHomeScreen";
 import WorkshopOwnerHomeScreen from "./screens/WorkshopOwnerHomeScreen";
 import ForgotPasswordScreen from "./screens/ForgotPasswordScreen";
 import ProductInfoScreen from "./VehicleOwnerScreens/ProductInfoScreen";
+import CartScreen from "./VehicleOwnerScreens/CartScreen";
+import CheckoutScreen from "./VehicleOwnerScreens/CheckoutScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -77,6 +79,12 @@ export default function App() {
           component={ProductInfoScreen}
           options={{ gestureEnabled: false }}
         />
+        <Stack.Screen
+          name="CartScreen"
+          component={CartScreen}
+          options={{ gestureEnabled: false }}
+        />
+        <Stack.Screen name="CheckoutScreen" component={CheckoutScreen} />
       </Stack.Navigator>
 
       <Modal

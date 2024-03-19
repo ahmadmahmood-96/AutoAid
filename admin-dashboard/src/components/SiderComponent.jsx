@@ -6,6 +6,7 @@ import {
   AppstoreOutlined,
   HomeOutlined,
   UserOutlined,
+  ShopOutlined,
 } from "@ant-design/icons";
 
 const SiderComponent = () => {
@@ -47,6 +48,11 @@ const items = [
     ],
   },
   { key: "/home/user-details", label: "User Details", icon: <UserOutlined /> },
+  {
+    key: "/home/order-details",
+    label: "Order Details",
+    icon: <ShopOutlined />,
+  },
   { key: "logout", label: "Logout", icon: <LogoutOutlined />, danger: true },
 ];
 

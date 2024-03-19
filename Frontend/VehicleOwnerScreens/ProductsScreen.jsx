@@ -11,7 +11,7 @@ import {
   StatusBar,
   ActivityIndicator,
 } from "react-native";
-import { MaterialIcons } from "@expo/vector-icons";
+import { MaterialIcons, Ionicons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 
@@ -23,6 +23,7 @@ export default function ProductScreen({ navigation }) {
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [selectedButton, setSelectedButton] = useState("All");
   const [loading, setLoading] = useState(true);
+  const [cartItems, setCartItems] = useState([]);
 
   const handleButtonPress = (button) => {
     setSelectedButton(button);
@@ -57,26 +58,44 @@ export default function ProductScreen({ navigation }) {
     );
   };
 
-  useEffect(() => {
-    async function fetchData() {
-      const token = await AsyncStorage.getItem("authToken");
-      await axios
-        .get(`${baseUrl}product/get-products`, {
-          headers: { Authorization: `Bearer ${token}` },
-        })
-        .then((response) => {
-          setProducts(response.data);
-        })
-        .catch((error) => {
-          console.error("Error fetching products:", error);
-        })
-        .finally(() => {
-          setFilteredProducts(products);
-          setLoading(false);
-        });
+  const fetchCartItems = async () => {
+    const jsonValue = await AsyncStorage.getItem("cartItems");
+    if (jsonValue !== null) {
+      // Array found, parse the JSON and check if it's empty
+      const array = JSON.parse(jsonValue);
+      if (array.length > 0) {
+        setCartItems(array);
+      } else {
+        setCartItems([]);
+      }
     }
+  };
+
+  async function fetchData() {
+    const token = await AsyncStorage.getItem("authToken");
+    await axios
+      .get(`${baseUrl}product/get-products`, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      .then((response) => {
+        setProducts(response.data);
+        setFilteredProducts(response.data);
+      })
+      .catch((error) => {
+        console.error("Error fetching products:", error);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }
+
+  useEffect(() => {
     fetchData();
-  });
+  }, []);
+
+  useEffect(() => {
+    fetchCartItems();
+  }, [cartItems]);
 
   return (
     <>
@@ -163,13 +182,14 @@ export default function ProductScreen({ navigation }) {
                       productName: product.productName,
                       price: product.price,
                       description: product.description,
-                      images: product.images,
+                      // images: product.images, original line uncomment this at the time of pushing
                     })
                   }
                 >
                   <View style={styles.box}>
                     <Image
-                      source={{ uri: product.images[0].data }} // Assuming images are stored as URIs
+                      // source={{ uri: product.images[0].data }} original line uncomment this at the time of pushing
+                      source={require("../assets/icon.png")}
                       style={styles.cardImage}
                     />
                     <View style={styles.cardProduct}>
@@ -206,6 +226,15 @@ export default function ProductScreen({ navigation }) {
           </View>
         </View>
       </ScrollView>
+      <TouchableOpacity
+        style={styles.cartIcon}
+        onPress={() => navigation.navigate("CartScreen")}
+      >
+        {cartItems.length > 0 && (
+          <Text style={styles.cartItems}>{cartItems.length}</Text>
+        )}
+        <Ionicons name="cart-outline" size={30} color="black" />
+      </TouchableOpacity>
     </>
   );
 }
@@ -279,8 +308,6 @@ const styles = StyleSheet.create({
     position: "absolute",
     bottom: -2,
     left: 150,
-    // marginLeft: 40,
-    // marginBottom: 5,
   },
   container: {
     flex: 1,
@@ -340,5 +367,24 @@ const styles = StyleSheet.create({
   },
   heading: {
     fontSize: 22,
+  },
+  cartIcon: {
+    position: "absolute",
+    bottom: 20,
+    right: 20,
+    width: 55,
+    backgroundColor: "#979797c0",
+    borderRadius: 50,
+    padding: 10,
+  },
+  cartItems: {
+    backgroundColor: "red",
+    position: "absolute",
+    right: 11,
+    padding: 1,
+    paddingHorizontal: 7,
+    zIndex: 9,
+    borderRadius: 10,
+    overflow: "hidden",
   },
 });

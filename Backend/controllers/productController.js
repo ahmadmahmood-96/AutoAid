@@ -1,4 +1,5 @@
 const Product = require('../models/product');
+const Order = require('../models/order');
 
 // Save product information
 exports.saveProduct = async (req, res) => {
@@ -98,6 +99,63 @@ exports.editProduct = async (req, res) => {
     } catch (error) {
         res.json({
             error: 'Error updating product'
+        });
+    }
+};
+
+// Save product information
+exports.placeOrder = async (req, res) => {
+    try {
+        const {
+            user,
+            products,
+            shippingAddress,
+            totalPrice,
+            paymentMethod,
+        } = req.body;
+
+        // Check product availability and quantity
+        for (const productItem of products) {
+            const product = await Product.findById(productItem.productId);
+            if (!product) {
+                return res.status(400).json({
+                    message: 'Product not found'
+                });
+            }
+            if (productItem.quantity > product.quantity) {
+                return res.status(400).json({
+                    message: `Not enough stock available for ${product.productName}`
+                });
+            }
+        }
+
+        // Create a new order instance
+        const order = new Order({
+            user,
+            products,
+            shippingAddress,
+            totalPrice,
+            paymentMethod,
+        });
+
+        // Save the order to the database
+        await order.save();
+
+        // Update product quantities in the database
+        for (const productItem of products) {
+            const product = await Product.findById(productItem.productId);
+            product.quantity -= productItem.quantity;
+            await product.save();
+        }
+
+        // Respond with success message
+        res.status(201).json({
+            success: true
+        });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            message: 'Internal Server Error'
         });
     }
 };

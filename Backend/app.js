@@ -4,6 +4,7 @@ const app = express();
 const port = process.env.PORT;
 const cors = require('cors');
 const mongoose = require("mongoose");
+const bodyParser = require("body-parser");
 
 mongoose.set("strictQuery", false);
 
@@ -17,12 +18,13 @@ const verifyToken = require("./middleware/verify");
 
 // Middleware
 app.use(cors());
-app.use(express.urlencoded({
-    extended: true,
+app.use(bodyParser.json({
     limit: '50mb'
 }));
-app.use(express.json({
-    limit: '50mb'
+app.use(bodyParser.urlencoded({
+    extended: true,
+    limit: '50mb',
+    parameterLimit: 50000
 }));
 
 // Database Setup

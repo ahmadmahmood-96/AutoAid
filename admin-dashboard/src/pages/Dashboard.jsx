@@ -12,6 +12,9 @@ export default function Dashboard() {
   const [totalServiceProviders, setTotalServiceProviders] = useState(0);
   const [totalWorkshopOwners, setTotalWorkshopOwners] = useState(0);
   const [totalProducts, setTotalProducts] = useState(0);
+  const [totalOrders, setTotalOrders] = useState(0);
+  const [totalDispatchedOrders, setTotalDispatchedOrders] = useState(0);
+  const [totalDeliveredOrders, setTotalDeliveredOrders] = useState(0);
 
   useEffect(() => {
     axios
@@ -53,6 +56,39 @@ export default function Dashboard() {
       })
       .then((response) => {
         setTotalProducts(response.data.totalProducts);
+      })
+      .catch((error) => {
+        message.error("Error fetching records:", error);
+      });
+
+    axios
+      .get(`${baseUrl}admin/total-orders`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      })
+      .then((response) => {
+        setTotalOrders(response.data.totalOrders);
+      })
+      .catch((error) => {
+        message.error("Error fetching records:", error);
+      });
+
+    axios
+      .get(`${baseUrl}admin/total-dispatched-orders`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      })
+      .then((response) => {
+        setTotalDispatchedOrders(response.data.totalDispatchedOrders);
+      })
+      .catch((error) => {
+        message.error("Error fetching records:", error);
+      });
+
+    axios
+      .get(`${baseUrl}admin/total-delivered-orders`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      })
+      .then((response) => {
+        setTotalDeliveredOrders(response.data.totalDeliveredOrders);
       })
       .catch((error) => {
         message.error("Error fetching records:", error);
@@ -106,7 +142,7 @@ export default function Dashboard() {
           <Card bordered={false}>
             <Statistic
               title="Total Number of Orders"
-              value={37}
+              value={totalOrders}
               valueStyle={styles}
               formatter={formatter}
             />
@@ -116,7 +152,17 @@ export default function Dashboard() {
           <Card bordered={false}>
             <Statistic
               title="Orders Dispatched"
-              value={83}
+              value={totalDispatchedOrders}
+              valueStyle={styles}
+              formatter={formatter}
+            />
+          </Card>
+        </Col>
+        <Col span={6} xxl={6} xl={6} lg={6} md={6} sm={12} xs={24}>
+          <Card bordered={false}>
+            <Statistic
+              title="Orders Delivered"
+              value={totalDeliveredOrders}
               valueStyle={styles}
               formatter={formatter}
             />

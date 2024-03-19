@@ -2,8 +2,6 @@ import { createDrawerNavigator } from "@react-navigation/drawer";
 
 import { Ionicons } from "@expo/vector-icons";
 
-import AsyncStorage from "@react-native-async-storage/async-storage";
-
 import HomeScreen from "../VehicleOwnerScreens/HomeScreen";
 import ProductsScreen from "../VehicleOwnerScreens/ProductsScreen";
 import DrawerContent from "../components/DrawerContent";

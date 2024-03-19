@@ -5,6 +5,7 @@ const {
     ServiceProvider
 } = require("../models/user");
 const Product = require('../models/product');
+const Order = require('../models/order');
 
 exports.getTotalVehicleOwners = async (req, res) => {
     try {
@@ -51,6 +52,60 @@ exports.getTotalProducts = async (req, res) => {
         res.json({
             totalProducts
         });
+    } catch (error) {
+        res.json({
+            error: 'Internal Server Error'
+        });
+    }
+};
+
+exports.getTotalOrders = async (req, res) => {
+    try {
+        const totalOrders = await Order.countDocuments();
+        res.json({
+            totalOrders
+        });
+    } catch (error) {
+        res.json({
+            error: 'Internal Server Error'
+        });
+    }
+};
+
+exports.getTotalDispatchedOrders = async (req, res) => {
+    try {
+        const totalDispatchedOrders = await Order.countDocuments({
+            status: 'Order Dispatched'
+        });
+        res.json({
+            totalDispatchedOrders
+        });
+    } catch (error) {
+        res.status(500).json({
+            error: 'Internal Server Error'
+        });
+    }
+};
+
+exports.getTotalDeliveredOrders = async (req, res) => {
+    try {
+        const totalDeliveredOrders = await Order.countDocuments({
+            status: 'Order Delivered'
+        });
+        res.json({
+            totalDeliveredOrders
+        });
+    } catch (error) {
+        res.status(500).json({
+            error: 'Internal Server Error'
+        });
+    }
+};
+
+exports.getOrders = async (req, res) => {
+    try {
+        const orders = await Order.find();
+        res.json(orders);
     } catch (error) {
         res.json({
             error: 'Internal Server Error'
