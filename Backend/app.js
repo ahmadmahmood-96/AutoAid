@@ -11,6 +11,7 @@ mongoose.set("strictQuery", false);
 // Importing Routes
 const authRoutes = require("./routes/authRoutes");
 const productRoutes = require("./routes/productRoutes");
+const paymentRoutes = require("./routes/paymentRoutes");
 const adminRoutes = require("./routes/adminRoutes");
 
 // Importing Verifying Token Middleware
@@ -41,11 +42,8 @@ mongoose
 // Routes
 app.use('/auth', authRoutes);
 app.use('/product', verifyToken, productRoutes);
+app.use('/payment', paymentRoutes);
 app.use('/admin', verifyToken, adminRoutes);
-
-app.get('/', (req, res) => {
-    res.send(`<h2>Hello</h2>`);
-});
 
 // Server Listening
 app.listen(port, () => {

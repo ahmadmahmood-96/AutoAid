@@ -82,7 +82,7 @@ export default function ProductScreen({ navigation }) {
         setFilteredProducts(response.data);
       })
       .catch((error) => {
-        console.error("Error fetching products:", error);
+        console.error("Error fetching products:", error.message);
       })
       .finally(() => {
         setLoading(false);

@@ -11,12 +11,15 @@ import {
   StyleSheet,
   StatusBar,
   ScrollView,
+  Alert,
 } from "react-native";
 import { TextInput, RadioButton } from "react-native-paper";
 import { Ionicons } from "@expo/vector-icons";
 import Icon from "react-native-vector-icons/FontAwesome";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import RNPickerSelect from "react-native-picker-select";
 import axios from "axios";
+import { useStripe } from "@stripe/stripe-react-native";
 import { jwtDecode } from "jwt-decode";
 import { decode } from "base-64";
 
@@ -46,13 +49,8 @@ export default function CheckoutScreen({ navigation }) {
   };
 
   const validateFullName = (name) => {
-    const re = /^[a-zA-Z]+$/;
-    return re.test(name);
-  };
-
-  const validateCity = (city) => {
     const re = /^[a-zA-Z\s]+$/;
-    return re.test(city);
+    return re.test(name);
   };
 
   const validatePostalCode = (postalCode) => {
@@ -71,6 +69,8 @@ export default function CheckoutScreen({ navigation }) {
     }
     return number.substring(0, 4) + "-" + number.substring(4);
   };
+
+  const { initPaymentSheet, presentPaymentSheet } = useStripe();
 
   const handleCheckout = async () => {
     try {
@@ -94,15 +94,13 @@ export default function CheckoutScreen({ navigation }) {
       } else if (!validateEmail(email)) {
         setError("Please enter a valid email address.");
         return;
-      } else if (!validateCity(city)) {
-        setError(
-          "Please enter a valid city name (only alphabetic characters allowed)."
-        );
-        return;
       } else if (!validatePostalCode(postalCode)) {
         setError(
           "Please enter a valid 5-digit postal code (only numbers allowed)."
         );
+        return;
+      } else if (city === "") {
+        setError("Please select a city.");
         return;
       }
 
@@ -111,6 +109,7 @@ export default function CheckoutScreen({ navigation }) {
 
       const token = await AsyncStorage.getItem("authToken");
       const decodedToken = jwtDecode(token);
+
       // Construct the order data object
       const orderData = {
         user: decodedToken.user._id, // Assuming you have userId available
@@ -131,13 +130,56 @@ export default function CheckoutScreen({ navigation }) {
         },
         paymentMethod, // Example payment method
       };
-      // Make a POST request to the backend API
+
+      if (paymentMethod === "Payment by Card") {
+        if (calculateTotalPrice(products) > 150) {
+          // Make a POST request to the backend API
+          const paymentResponse = await axios.post(
+            `${baseUrl}payment/intents`,
+            {
+              amount: Math.floor(calculateTotalPrice(products) * 100),
+            }
+          );
+
+          if (paymentResponse.status === 400) {
+            Alert.alert("Something went wrong");
+            return;
+          }
+          const initResponse = await initPaymentSheet({
+            merchantDisplayName: "AutoAid",
+            paymentIntentClientSecret: paymentResponse.data.paymentIntent,
+          });
+
+          if (initResponse.error) {
+            Alert.alert("Something went wrong");
+            return;
+          }
+
+          const paymentSheetResponse = await presentPaymentSheet();
+          if (paymentSheetResponse.error) {
+            Alert.alert(
+              `Error code: ${paymentSheetResponse.error.code}`,
+              paymentSheetResponse.error.message
+            );
+            return;
+          }
+        } else {
+          Alert.alert(
+            "Price Limit",
+            `Minimum total price for payment through card must be more than Rs. 150, your order price is ${calculateTotalPrice(
+              products
+            )}`
+          );
+          return;
+        }
+      }
+
       const response = await axios.post(
         `${baseUrl}product/place-order`,
         orderData,
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      console.log(response.data);
+
       if (response.data.success) {
         // Reset the form fields if needed
         setName("");
@@ -150,7 +192,9 @@ export default function CheckoutScreen({ navigation }) {
         setCity("");
         setError("");
         setPaymentMethod("");
-        console.log("Successful");
+        await AsyncStorage.removeItem("cartItems");
+        Alert.alert("Order Placed Successfully");
+        navigation.navigate("Home");
       } else if (response.status === 400) {
         setError(response.data.message);
       }
@@ -269,12 +313,40 @@ export default function CheckoutScreen({ navigation }) {
                 />
 
                 <Text style={styles.inputLabel}>City</Text>
-                <TextInput
-                  mode="outlined"
-                  style={styles.textInput}
-                  placeholder="Enter your city"
-                  value={city}
-                  onChangeText={setCity} // Update the city state
+                <RNPickerSelect
+                  onValueChange={(value) => setCity(value)}
+                  items={[
+                    { label: "Islamabad", value: "Islamabad" },
+                    { label: "Lahore", value: "Lahore" },
+                    { label: "Karachi", value: "Karachi" },
+                    { label: "Multan", value: "Multan" },
+                  ]}
+                  style={{
+                    inputIOS: {
+                      backgroundColor: "#fbfbfb",
+                      height: 50,
+                      width: "90%",
+                      borderWidth: 1,
+                      borderColor: "#7c7c7c",
+                      borderRadius: 5,
+                      padding: 10,
+                      color: "#333",
+                      marginLeft: 20,
+                      marginBottom: 20,
+                    },
+                    inputAndroid: {
+                      backgroundColor: "#fbfbfb",
+                      height: 50,
+                      width: "90%",
+                      borderWidth: 1,
+                      borderColor: "#7c7c7c",
+                      borderRadius: 5,
+                      padding: 10,
+                      color: "#333",
+                      marginLeft: 20,
+                      marginBottom: 20,
+                    },
+                  }}
                 />
 
                 <Text style={styles.inputLabel}>Select Payment Method</Text>
@@ -430,6 +502,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     marginTop: 15,
     marginBottom: 10,
+    paddingHorizontal: 15,
   },
   errorText: {
     color: "red",

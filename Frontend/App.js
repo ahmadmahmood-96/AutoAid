@@ -15,12 +15,15 @@ import ForgotPasswordScreen from "./screens/ForgotPasswordScreen";
 import ProductInfoScreen from "./VehicleOwnerScreens/ProductInfoScreen";
 import CartScreen from "./VehicleOwnerScreens/CartScreen";
 import CheckoutScreen from "./VehicleOwnerScreens/CheckoutScreen";
+import { StripeProvider } from "@stripe/stripe-react-native";
 
 const Stack = createNativeStackNavigator();
 
 export default function App() {
   const [isConnected, setIsConnected] = useState(true);
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const STRIPE_KEY =
+    "pk_test_51OvjfW047NJZ4EdhMRFWEHaCmq6JZWuc1mntnnFUjNMlo4owg3TWmiO8H4McKdC0pNAxBVq5oUEuu9nkiXSPw6vv00j5xDFfaV";
 
   useEffect(() => {
     const unsubscribe = NetInfo.addEventListener((state) => {
@@ -35,68 +38,70 @@ export default function App() {
 
   return (
     <NavigationContainer>
-      <Stack.Navigator
-        initialRouteName="LandingPage"
-        screenOptions={{ headerShown: false }}
-      >
-        <Stack.Screen
-          name="LandingPage"
-          component={LandingPage}
-          options={{ gestureEnabled: false }}
-        />
-        <Stack.Screen
-          name="LoginScreen"
-          component={LoginScreen}
-          options={{ gestureEnabled: false }}
-        />
-        <Stack.Screen
-          name="ForgotPasswordScreen"
-          component={ForgotPasswordScreen}
-          options={{ gestureEnabled: false }}
-        />
-        <Stack.Screen
-          name="RegisterScreen"
-          component={RegisterScreen}
-          options={{ gestureEnabled: false }}
-        />
-        <Stack.Screen
-          name="VehicleOwnerHomeScreen"
-          component={VehicleOwnerHomeScreen}
-          options={{ gestureEnabled: false }}
-        />
-        <Stack.Screen
-          name="WorkshopOwnerHomeScreen"
-          component={WorkshopOwnerHomeScreen}
-          options={{ gestureEnabled: false }}
-        />
-        <Stack.Screen
-          name="ServiceProviderHomeScreen"
-          component={ServiceProviderHomeScreen}
-          options={{ gestureEnabled: false }}
-        />
-        <Stack.Screen
-          name="ProductInfoScreen"
-          component={ProductInfoScreen}
-          options={{ gestureEnabled: false }}
-        />
-        <Stack.Screen
-          name="CartScreen"
-          component={CartScreen}
-          options={{ gestureEnabled: false }}
-        />
-        <Stack.Screen name="CheckoutScreen" component={CheckoutScreen} />
-      </Stack.Navigator>
+      <StripeProvider publishableKey={STRIPE_KEY}>
+        <Stack.Navigator
+          initialRouteName="LandingPage"
+          screenOptions={{ headerShown: false }}
+        >
+          <Stack.Screen
+            name="LandingPage"
+            component={LandingPage}
+            options={{ gestureEnabled: false }}
+          />
+          <Stack.Screen
+            name="LoginScreen"
+            component={LoginScreen}
+            options={{ gestureEnabled: false }}
+          />
+          <Stack.Screen
+            name="ForgotPasswordScreen"
+            component={ForgotPasswordScreen}
+            options={{ gestureEnabled: false }}
+          />
+          <Stack.Screen
+            name="RegisterScreen"
+            component={RegisterScreen}
+            options={{ gestureEnabled: false }}
+          />
+          <Stack.Screen
+            name="VehicleOwnerHomeScreen"
+            component={VehicleOwnerHomeScreen}
+            options={{ gestureEnabled: false }}
+          />
+          <Stack.Screen
+            name="WorkshopOwnerHomeScreen"
+            component={WorkshopOwnerHomeScreen}
+            options={{ gestureEnabled: false }}
+          />
+          <Stack.Screen
+            name="ServiceProviderHomeScreen"
+            component={ServiceProviderHomeScreen}
+            options={{ gestureEnabled: false }}
+          />
+          <Stack.Screen
+            name="ProductInfoScreen"
+            component={ProductInfoScreen}
+            options={{ gestureEnabled: false }}
+          />
+          <Stack.Screen
+            name="CartScreen"
+            component={CartScreen}
+            options={{ gestureEnabled: false }}
+          />
+          <Stack.Screen name="CheckoutScreen" component={CheckoutScreen} />
+        </Stack.Navigator>
 
-      <Modal
-        animationType="slide"
-        transparent={true}
-        visible={!isConnected && isModalVisible}
-      >
-        <View style={styles.modalContainer}>
-          <MaterialCommunityIcons name="wifi-off" size={42} color="white" />
-          <Text style={styles.modalText}>No Internet Connection</Text>
-        </View>
-      </Modal>
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={!isConnected && isModalVisible}
+        >
+          <View style={styles.modalContainer}>
+            <MaterialCommunityIcons name="wifi-off" size={42} color="white" />
+            <Text style={styles.modalText}>No Internet Connection</Text>
+          </View>
+        </Modal>
+      </StripeProvider>
     </NavigationContainer>
   );
 }
