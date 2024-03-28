@@ -1,10 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Modal, Table, Tooltip, Typography, message, Tag } from "antd";
-import {
-  UserAddOutlined,
-  UserDeleteOutlined,
-  DeleteOutlined,
-} from "@ant-design/icons";
+import { Table, Typography, Tag } from "antd";
 import axios from "axios";
 
 const baseUrl = process.env.REACT_APP_BASE_URL;
@@ -121,6 +116,7 @@ export default function OrderDetails() {
         columns={columns}
         dataSource={orders}
         onChange={handleTableChange}
+        {...{ sortedInfo }}
       />
     </>
   );

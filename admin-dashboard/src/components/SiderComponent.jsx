@@ -7,6 +7,7 @@ import {
   HomeOutlined,
   UserOutlined,
   ShopOutlined,
+  SafetyOutlined,
 } from "@ant-design/icons";
 
 const SiderComponent = () => {
@@ -28,7 +29,6 @@ const SiderComponent = () => {
         width: "100%",
         backgroundColor: "#DDF2FD",
       }}
-      defaultOpenKeys={["sub1"]}
       selectedKeys={[window.location.pathname]}
       mode="inline"
       items={items}
@@ -45,6 +45,15 @@ const items = [
     children: [
       { key: "/home/add-product", label: "Add Products" },
       { key: "/home/view-product", label: "View Products" },
+    ],
+  },
+  {
+    key: "sub2",
+    label: "Insurances",
+    icon: <SafetyOutlined />,
+    children: [
+      { key: "/home/add-insurance", label: "Add Insurance" },
+      { key: "/home/view-insurance", label: "View Insurance" },
     ],
   },
   { key: "/home/user-details", label: "User Details", icon: <UserOutlined /> },

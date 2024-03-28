@@ -41,11 +41,13 @@ export default function ViewProduct() {
       key: 1,
       title: "Product Name",
       dataIndex: "productName",
+      width: 150,
     },
     {
       key: 2,
       title: "Category",
       dataIndex: "category",
+      width: 150,
       filters: [
         { text: "Car", value: "Car" },
         { text: "Bike", value: "Bike" },
@@ -56,6 +58,7 @@ export default function ViewProduct() {
       key: 3,
       title: "Price",
       dataIndex: "price",
+      width: 150,
       render: (text) => `Rs. ${text}`,
       sorter: (record1, record2) => {
         return record1.price > record2.price;
@@ -65,6 +68,7 @@ export default function ViewProduct() {
       key: 4,
       title: "Quantity",
       dataIndex: "quantity",
+      width: 150,
       sorter: (record1, record2) => {
         return record1.quantity > record2.quantity;
       },
@@ -73,10 +77,23 @@ export default function ViewProduct() {
       key: 5,
       title: "Description",
       dataIndex: "description",
+      width: 250,
+      render: (text) => (
+        <div
+          style={{
+            maxHeight: 45,
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+          }}
+        >
+          {text}
+        </div>
+      ),
     },
     {
       key: 6,
       title: "Actions",
+      width: 150,
       render: (record) => {
         return (
           <>
@@ -194,7 +211,12 @@ export default function ViewProduct() {
   return (
     <>
       <Typography.Title level={2}>Products Details</Typography.Title>
-      <Table columns={columns} dataSource={products} />
+      <Table
+        columns={columns}
+        dataSource={products}
+        scroll={{ x: 768 }}
+        pagination={{ pageSize: 5 }}
+      />
       <Modal
         title="Edit Product"
         open={showEditModal}

@@ -13,6 +13,7 @@ const authRoutes = require("./routes/authRoutes");
 const productRoutes = require("./routes/productRoutes");
 const paymentRoutes = require("./routes/paymentRoutes");
 const adminRoutes = require("./routes/adminRoutes");
+const insuranceRoutes = require("./routes/insuranceRoutes");
 
 // Importing Verifying Token Middleware
 const verifyToken = require("./middleware/verify");
@@ -44,6 +45,7 @@ app.use('/auth', authRoutes);
 app.use('/product', verifyToken, productRoutes);
 app.use('/payment', paymentRoutes);
 app.use('/admin', verifyToken, adminRoutes);
+app.use('/insurance', verifyToken, insuranceRoutes);
 
 // Server Listening
 app.listen(port, () => {

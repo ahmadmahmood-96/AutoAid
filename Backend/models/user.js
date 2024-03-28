@@ -33,6 +33,13 @@ const vehicleOwnerSchema = new mongoose.Schema({
     vehicleType: {
         type: String,
     },
+    haveInsurance: {
+        type: Boolean,
+    },
+    insurance: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Insurance",
+    }
 });
 
 // Schema for Workshop Owner

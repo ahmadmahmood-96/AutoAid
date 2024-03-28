@@ -182,21 +182,21 @@ export default function ProductScreen({ navigation }) {
                       productName: product.productName,
                       price: product.price,
                       description: product.description,
-                      // images: product.images, original line uncomment this at the time of pushing
+                      images: product.images, // original line uncomment this at the time of pushing
                     })
                   }
                 >
                   <View style={styles.box}>
                     <Image
-                      // source={{ uri: product.images[0].data }} original line uncomment this at the time of pushing
-                      source={require("../assets/icon.png")}
+                      source={{ uri: product.images[0].data }} //  original line uncomment this at the time of pushing
+                      // source={require("../assets/icon.png")}
                       style={styles.cardImage}
                     />
                     <View style={styles.cardProduct}>
                       <Text style={styles.productTitle}>
                         {product.productName}
                       </Text>
-                      <Text style={styles.productDescription}>
+                      <Text numberOfLines={2} style={styles.productDescription}>
                         {product.description}
                       </Text>
                       <View style={styles.priceContainer}>

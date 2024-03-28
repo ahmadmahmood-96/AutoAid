@@ -28,6 +28,7 @@ export default function Login() {
   const onFinish = async (values) => {
     try {
       const response = await axios.post(`${baseUrl}auth/login`, values);
+      console.log(response.data);
       if (response.status === 200 && response.data.role === "Admin") {
         localStorage.setItem("token", response.data.token);
         localStorage.setItem("role", response.data.role);
@@ -38,7 +39,7 @@ export default function Login() {
         // Navigate to the home page after successful login
         navigate("/home", { replace: true });
       } else if (response.data.role !== "Admin") {
-        message.error("Invalid User!");
+        message.error(response.data.message);
       }
     } catch (e) {
       // Handle login errors

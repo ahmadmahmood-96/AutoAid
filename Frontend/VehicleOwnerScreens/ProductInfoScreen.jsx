@@ -16,10 +16,8 @@ import { Ionicons } from "@expo/vector-icons";
 const { height, width } = Dimensions.get("window");
 
 export default function ProductInfoScreen({ navigation, route }) {
-  // const { id, productName, price, description, images, cartItems } = route.params; original line uncomment this at the time of pushing
-  const { id, productName, price, description } = route.params;
-  // const [indicators, setIndicators] = useState(Array(images.length).fill(1)); original line uncomment this at the time of pushing
-  const [indicators, setIndicators] = useState([1, 1, 1, 1]);
+  const { id, productName, price, description, images } = route.params;
+  const [indicators, setIndicators] = useState(Array(images.length).fill(1));
   const [currentIndex, setCurrentIndex] = useState(0);
   const [quantity, setQuantity] = useState(1);
 
@@ -54,6 +52,7 @@ export default function ProductInfoScreen({ navigation, route }) {
           productName,
           price,
           quantity,
+          images,
         });
       }
 
@@ -89,6 +88,22 @@ export default function ProductInfoScreen({ navigation, route }) {
           <Ionicons name="chevron-back" size={32} color="#00BE00" />
         </TouchableOpacity>
         <View style={styles.contentContainer}>
+          <FlatList
+            data={images}
+            keyExtractor={(item) => item._id.toString()}
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            renderItem={({ item }) => (
+              <Image
+                source={{ uri: item.data }} // Assuming images are stored as URIs
+                style={styles.image}
+              />
+            )}
+            onScroll={(e) => {
+              const x = e.nativeEvent.contentOffset.x;
+              setCurrentIndex((x / width).toFixed(0));
+            }}
+          />
           <View style={styles.indicator}>
             {indicators.map((item, index) => {
               return (

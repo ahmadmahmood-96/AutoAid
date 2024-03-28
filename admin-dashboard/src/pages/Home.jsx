@@ -29,12 +29,16 @@ const Home = () => {
         <HeaderComponent collapsed={collapsed} handleToggle={handleToggle} />
         <Layout>
           <Sider
-            width="16%"
+            width="230px"
             style={siderStyle}
             trigger={null}
             collapsible
             collapsed={collapsed}
             collapsedWidth={0}
+            breakpoint="md"
+            onBreakpoint={() => {
+              setCollapsed(!collapsed);
+            }}
           >
             <SiderComponent />
           </Sider>

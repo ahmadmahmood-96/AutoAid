@@ -86,7 +86,7 @@ export default function CartScreen({ navigation }) {
                   <Pressable style={styles.card} key={product.id}>
                     <View style={styles.box}>
                       <Image
-                        source={require("../assets/icon.png")}
+                        source={{ uri: product.images[0].data }}
                         style={styles.cardImage}
                       />
                       <View style={styles.cardProduct}>
