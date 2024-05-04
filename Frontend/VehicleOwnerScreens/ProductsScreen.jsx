@@ -9,6 +9,7 @@ import {
   Pressable,
   TouchableOpacity,
   StatusBar,
+  FlatList,
   ActivityIndicator,
 } from "react-native";
 import { MaterialIcons, Ionicons } from "@expo/vector-icons";
@@ -97,133 +98,122 @@ export default function ProductScreen({ navigation }) {
     fetchCartItems();
   }, [cartItems]);
 
+  const renderProductItem = ({ item }) => (
+    <Pressable
+      key={item._id}
+      style={styles.card}
+      onPress={() =>
+        navigation.navigate("ProductInfoScreen", {
+          id: item._id,
+          productName: item.productName,
+          price: item.price,
+          description: item.description,
+          images: item.images,
+        })
+      }
+    >
+      <View style={styles.box}>
+        <Image source={{ uri: item.images[0].data }} style={styles.cardImage} />
+        <View style={styles.cardProduct}>
+          <Text style={styles.productTitle}>{item.productName}</Text>
+          <Text numberOfLines={2} style={styles.productDescription}>
+            {item.description}
+          </Text>
+          <View style={styles.priceContainer}>
+            <Text style={styles.productPrice}>Rs. {item.price}</Text>
+            <Pressable
+              style={[styles.button, styles.buyButton, styles.selectedButton]}
+              pointerEvents="none"
+            >
+              <Text style={styles.buybuttonText}>Buy</Text>
+            </Pressable>
+          </View>
+        </View>
+      </View>
+    </Pressable>
+  );
+
   return (
     <>
       <StatusBar barStyle="dark-content" />
-      <ScrollView>
-        <View style={styles.container}>
-          <View style={styles.searchContainer}>
-            {/* Search Icon */}
-            <MaterialIcons
-              name="search"
-              size={24}
-              style={styles.searchIcon}
-              color="#00BE00"
-            />
-            {/* Text Input with Search Icon */}
-            <TextInput
-              style={styles.searchInput}
-              placeholder="Search"
-              value={searchText}
-              onChangeText={handleSearch}
-            />
-          </View>
-          <View style={styles.buttonContainer}>
-            <TouchableOpacity
+      <ScrollView
+        style={styles.container}
+        contentContainerStyle={styles.scrollViewContent}
+      >
+        <View style={styles.searchContainer}>
+          {/* Search Icon */}
+          <MaterialIcons
+            name="search"
+            size={24}
+            style={styles.searchIcon}
+            color="#00BE00"
+          />
+          {/* Text Input with Search Icon */}
+          <TextInput
+            style={styles.searchInput}
+            placeholder="Search"
+            value={searchText}
+            onChangeText={handleSearch}
+          />
+        </View>
+        <View style={styles.buttonContainer}>
+          <TouchableOpacity
+            style={[
+              styles.button,
+              selectedButton === "All" && styles.selectedButton,
+            ]}
+            onPress={() => handleButtonPress("All")}
+          >
+            <Text
               style={[
-                styles.button,
-                selectedButton === "All" && styles.selectedButton,
+                styles.buttonText,
+                selectedButton === "All" && styles.selectedButtonText,
               ]}
-              onPress={() => handleButtonPress("All")}
             >
-              <Text
-                style={[
-                  styles.buttonText,
-                  selectedButton === "All" && styles.selectedButtonText,
-                ]}
-              >
-                All
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
+              All
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[
+              styles.button,
+              selectedButton === "Car" && styles.selectedButton,
+            ]}
+            onPress={() => handleButtonPress("Car")}
+          >
+            <Text
               style={[
-                styles.button,
-                selectedButton === "Car" && styles.selectedButton,
+                styles.buttonText,
+                selectedButton === "Car" && styles.selectedButtonText,
               ]}
-              onPress={() => handleButtonPress("Car")}
             >
-              <Text
-                style={[
-                  styles.buttonText,
-                  selectedButton === "Car" && styles.selectedButtonText,
-                ]}
-              >
-                Car
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
+              Car
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[
+              styles.button,
+              selectedButton === "Bike" && styles.selectedButton,
+            ]}
+            onPress={() => handleButtonPress("Bike")}
+          >
+            <Text
               style={[
-                styles.button,
-                selectedButton === "Bike" && styles.selectedButton,
+                styles.buttonText,
+                selectedButton === "Bike" && styles.selectedButtonText,
               ]}
-              onPress={() => handleButtonPress("Bike")}
             >
-              <Text
-                style={[
-                  styles.buttonText,
-                  selectedButton === "Bike" && styles.selectedButtonText,
-                ]}
-              >
-                Bike
-              </Text>
-            </TouchableOpacity>
-          </View>
-          <View style={styles.rowContainer}>
-            {loading ? (
-              <ActivityIndicator size="large" color="#00BE00" /> // Show loading indicator while data is being fetched
-            ) : filteredProducts.length > 0 ? (
-              filteredProducts.map((product) => (
-                <Pressable
-                  style={styles.card}
-                  key={product._id}
-                  onPress={() =>
-                    navigation.navigate("ProductInfoScreen", {
-                      id: product._id,
-                      productName: product.productName,
-                      price: product.price,
-                      description: product.description,
-                      images: product.images, // original line uncomment this at the time of pushing
-                    })
-                  }
-                >
-                  <View style={styles.box}>
-                    <Image
-                      source={{ uri: product.images[0].data }} //  original line uncomment this at the time of pushing
-                      // source={require("../assets/icon.png")}
-                      style={styles.cardImage}
-                    />
-                    <View style={styles.cardProduct}>
-                      <Text style={styles.productTitle}>
-                        {product.productName}
-                      </Text>
-                      <Text numberOfLines={2} style={styles.productDescription}>
-                        {product.description}
-                      </Text>
-                      <View style={styles.priceContainer}>
-                        <Text style={styles.productPrice}>
-                          Rs. {product.price}
-                        </Text>
-                        <Pressable
-                          style={[
-                            styles.button,
-                            styles.buyButton,
-                            styles.selectedButton,
-                          ]}
-                          pointerEvents="none"
-                        >
-                          <Text style={styles.buybuttonText}>Buy</Text>
-                        </Pressable>
-                      </View>
-                    </View>
-                  </View>
-                </Pressable>
-              ))
-            ) : (
-              <View style={styles.container}>
-                <Text style={styles.heading}>No products to display</Text>
-              </View>
-            )}
-          </View>
+              Bike
+            </Text>
+          </TouchableOpacity>
+        </View>
+        <View style={styles.rowContainer}>
+          {loading ? (
+            <ActivityIndicator size="large" color="#00BE00" /> // Show loading indicator while data is being fetched
+          ) : filteredProducts.length > 0 ? (
+            filteredProducts.map((item) => renderProductItem({ item }))
+          ) : (
+            <Text style={styles.heading}>No products to display</Text>
+          )}
         </View>
       </ScrollView>
       <TouchableOpacity
@@ -240,6 +230,10 @@ export default function ProductScreen({ navigation }) {
 }
 
 const styles = StyleSheet.create({
+  scrollViewContent: {
+    flexGrow: 1,
+    paddingBottom: 20, // Adjust the padding bottom as needed to make sure the content scrolls to the end
+  },
   shadow: {
     shadowColor: "#000",
     shadowOffset: { width: 1, height: 3 },
@@ -283,20 +277,19 @@ const styles = StyleSheet.create({
     shadowRadius: 3.84,
     elevation: 5, // for Android
   },
-  buttonText: {
-    fontSize: 18,
-    color: "#00BE00",
-  },
   selectedButton: {
-    backgroundColor: "#00BE00", // Change the color to indicate selection
+    backgroundColor: "#00BE00",
+  },
+  buttonText: {
+    fontSize: 16,
+    fontWeight: "bold",
   },
   selectedButtonText: {
-    fontSize: 18,
-    color: "#f7f7f7",
+    color: "#fff",
   },
   buybuttonText: {
-    fontSize: 15,
-    color: "#f7f7f7",
+    color: "#fff",
+    fontWeight: "bold",
   },
   priceContainer: {
     position: "absolute",
@@ -368,15 +361,7 @@ const styles = StyleSheet.create({
   heading: {
     fontSize: 22,
   },
-  cartIcon: {
-    position: "absolute",
-    bottom: 20,
-    right: 20,
-    width: 55,
-    backgroundColor: "#979797c0",
-    borderRadius: 50,
-    padding: 10,
-  },
+
   cartItems: {
     backgroundColor: "red",
     position: "absolute",
@@ -385,6 +370,39 @@ const styles = StyleSheet.create({
     paddingHorizontal: 7,
     zIndex: 9,
     borderRadius: 10,
+    overflow: "hidden",
+  },
+  cartIcon: {
+    position: "absolute",
+    bottom: 20,
+    right: 20,
+    backgroundColor: "#dfdede",
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    justifyContent: "center",
+    alignItems: "center",
+    elevation: 5,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+  },
+  cartItems: {
+    position: "absolute",
+    top: -5,
+    right: 1,
+    backgroundColor: "#00BE00",
+    borderRadius: 10,
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    color: "#fff",
+    fontSize: 12,
+    zIndex: 9,
+    borderRadius: 8,
     overflow: "hidden",
   },
 });

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -29,6 +29,16 @@ export default function InsuranceFormScreen({ navigation }) {
   const [isFrontFogLights, setIsFrontFogLights] = useState("");
   const [isPowerSteering, setIsPowerSteering] = useState("");
   const [error, setError] = useState("");
+
+  useEffect(() => {
+    if (error === "Sorry there are no insurance packages for you") {
+      Alert.alert(
+        "No Insurance",
+        "Sorry there are no insurance packages for you",
+        [{ text: "OK", onPress: () => navigation.navigate("Home") }]
+      );
+    }
+  }, [error]);
 
   const handleInsuranceClaim = async () => {
     try {
@@ -71,25 +81,25 @@ export default function InsuranceFormScreen({ navigation }) {
         inputData
       );
 
-      console.log(response.data);
-      if (response.data === "Claim") {
-        navigation.navigate("");
-      }
-
       if (response.status === 200) {
         // Reset the form fields if needed
         setAgeOfCar("");
         setAgeofOwner("");
-        setFuelType("");
-        setAirBags("");
-        setRearBrakes("");
-        setTransmission("");
-        setGearBox("");
-        setSteeringType("");
-        setIsFrontFogLights("");
-        setIsPowerSteering("");
+        setFuelType(0);
+        setAirBags(0);
+        setRearBrakes(0);
+        setTransmission(0);
+        setGearBox(0);
+        setSteeringType(0);
+        setIsFrontFogLights(0);
+        setIsPowerSteering(0);
         setError("");
-        navigation.navigate("InsuranceBuyScreen");
+
+        if (response.data === "Claim")
+          navigation.navigate("InsuranceBuyScreen");
+        else {
+          setError("Sorry there are no insurance packages for you");
+        }
       } else if (response.status === 400) {
         setError("Failed to predict. Please try again.");
       }
@@ -174,6 +184,10 @@ export default function InsuranceFormScreen({ navigation }) {
                 <Text style={styles.inputLabel}>Fuel Type</Text>
                 <RNPickerSelect
                   onValueChange={(value) => setFuelType(value)}
+                  placeholder={{
+                    label: "Select Fuel type",
+                    value: 0,
+                  }}
                   items={[
                     { label: "Petrol", value: "Petrol" },
                     { label: "Diesel", value: "Diesel" },
@@ -185,6 +199,10 @@ export default function InsuranceFormScreen({ navigation }) {
                 <Text style={styles.inputLabel}>Airbags</Text>
                 <RNPickerSelect
                   onValueChange={(value) => setAirBags(value)}
+                  placeholder={{
+                    label: "Select No. of Airbags",
+                    value: 0,
+                  }}
                   items={[
                     { label: "0", value: "0" },
                     { label: "1", value: "1" },
@@ -198,6 +216,10 @@ export default function InsuranceFormScreen({ navigation }) {
                 <Text style={styles.inputLabel}>Rear Brakes Type</Text>
                 <RNPickerSelect
                   onValueChange={(value) => setRearBrakes(value)}
+                  placeholder={{
+                    label: "Select Rear Brakes type",
+                    value: 0,
+                  }}
                   items={[
                     { label: "Disc", value: "Disc" },
                     { label: "Drum", value: "Drum" },
@@ -208,6 +230,10 @@ export default function InsuranceFormScreen({ navigation }) {
                 <Text style={styles.inputLabel}>Transmission Type</Text>
                 <RNPickerSelect
                   onValueChange={(value) => setTransmission(value)}
+                  placeholder={{
+                    label: "Select Transmission Type",
+                    value: 0,
+                  }}
                   items={[
                     { label: "Manual", value: "Manual" },
                     { label: "Automatic", value: "Automatic" },
@@ -218,6 +244,10 @@ export default function InsuranceFormScreen({ navigation }) {
                 <Text style={styles.inputLabel}>Gear Box</Text>
                 <RNPickerSelect
                   onValueChange={(value) => setGearBox(value)}
+                  placeholder={{
+                    label: "Select No. of Gears",
+                    value: 0,
+                  }}
                   items={[
                     { label: "5", value: "5" },
                     { label: "6", value: "6" },
@@ -228,6 +258,10 @@ export default function InsuranceFormScreen({ navigation }) {
                 <Text style={styles.inputLabel}>Steering Type</Text>
                 <RNPickerSelect
                   onValueChange={(value) => setSteeringType(value)}
+                  placeholder={{
+                    label: "Select Steering Type",
+                    value: 0,
+                  }}
                   items={[
                     { label: "Power", value: "Power" },
                     { label: "Manual", value: "Manual" },
@@ -239,6 +273,10 @@ export default function InsuranceFormScreen({ navigation }) {
                 <Text style={styles.inputLabel}>Front Fog Lights</Text>
                 <RNPickerSelect
                   onValueChange={(value) => setIsFrontFogLights(value)}
+                  placeholder={{
+                    label: "Are there Front Fog Lights",
+                    value: 0,
+                  }}
                   items={[
                     { label: "Yes", value: "Yes" },
                     { label: "No", value: "No" },
@@ -249,6 +287,10 @@ export default function InsuranceFormScreen({ navigation }) {
                 <Text style={styles.inputLabel}>Power Steering</Text>
                 <RNPickerSelect
                   onValueChange={(value) => setIsPowerSteering(value)}
+                  placeholder={{
+                    label: "Is there Power Steering",
+                    value: 0,
+                  }}
                   items={[
                     { label: "Yes", value: "Yes" },
                     { label: "No", value: "No" },

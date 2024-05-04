@@ -12,6 +12,7 @@ import {
   StatusBar,
   Alert,
 } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 import { TextInput } from "react-native-paper";
 import axios from "axios";
 import OTPVerificationModal from "./OTPVerificationModal";
@@ -136,10 +137,13 @@ const ForgotPasswordScreen = ({ navigation }) => {
       <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={true}>
         <View style={styles.container}>
           <StatusBar barStyle="auto" />
+          <TouchableOpacity
+            style={styles.backButton}
+            onPress={() => navigation.navigate("LoginScreen")}
+          >
+            <Ionicons name="chevron-back" size={32} color="#ffff" />
+          </TouchableOpacity>
           <View style={styles.headerContainer}>
-            <TouchableOpacity onPress={() => navigation.goBack()}>
-              <Text>Back</Text>
-            </TouchableOpacity>
             <View style={styles.headerBox}>
               <Text style={styles.headerBoxText}>Need Help?</Text>
               <Text style={styles.headerBoxTextHeading}>
@@ -244,17 +248,22 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#00BE00",
   },
+  backButton: {
+    marginLeft: 8,
+    marginTop: 58,
+  },
   headerContainer: {
     backgroundColor: "#00BE00",
     width: "100%",
-    flex: 0.4,
+    flex: 0.3,
+    marginBottom: 20,
     alignItems: "center",
     justifyContent: "center",
     overflow: "hidden",
   },
   bodyContainer: {
     overflow: "hidden",
-    flex: 0.6,
+    flex: 0.7,
     backgroundColor: "#ffffff",
     width: "100%",
     alignItems: "center",
@@ -277,12 +286,7 @@ const styles = StyleSheet.create({
     fontSize: 25,
     fontWeight: "bold",
   },
-  buttonContainer: {
-    flexDirection: "row",
-    marginTop: 20,
-    backgroundColor: "#009200",
-    borderRadius: 20, // Adjust the borderRadius to get the pill shape
-  },
+
   button: {
     flex: 0.9, // Take up equal space
     paddingVertical: 10,

@@ -3,6 +3,10 @@ const crypto = require("crypto");
 const {
     sendVerificationEmail
 } = require("../utils/sendVerificationEmail");
+const OpenAI = require('openai');
+const openai = new OpenAI({
+    apiKey: process.env.OPENAI_API_KEY
+});
 
 // Import your user models
 const userModel = require("../models/user");
@@ -11,6 +15,7 @@ const {
     WorkshopOwner,
     ServiceProvider
 } = require("../models/user");
+const Price = require("../models/price");
 
 exports.registerUser = async (req, res) => {
     try {
@@ -254,5 +259,35 @@ exports.loginUser = async (req, res) => {
 
         // Common logic for both cases
         return generateAndSendToken(res, user, user.__t);
+    }
+};
+
+exports.chat = async (req, res) => {
+    try {
+        const {
+            userInput
+        } = req.body;
+
+        const response = await openai.chat.create({
+            messages: [{
+                    role: "user",
+                    content: userInput,
+                },
+                {
+                    role: "system",
+                    content: "Welcome! I'm the Autoaid chatbot, here to assist you on your journey by providing guidance and solutions to issues related to your car. Whether it's troubleshooting problems, offering maintenance tips, or providing advice on road safety, I'm here to help you navigate smoothly through any challenges you encounter on the road.",
+                },
+            ],
+            model: "gpt-3.5-turbo",
+        });
+
+        res.json({
+            response: response.data.choices[0].message
+        });
+    } catch (error) {
+        console.error("Error:", error);
+        res.status(500).json({
+            error: "Internal Server Error"
+        });
     }
 };

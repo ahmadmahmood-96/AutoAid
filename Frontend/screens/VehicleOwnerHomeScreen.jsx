@@ -5,6 +5,7 @@ import { Ionicons } from "@expo/vector-icons";
 import HomeScreen from "../VehicleOwnerScreens/HomeScreen";
 import ProductsScreen from "../VehicleOwnerScreens/ProductsScreen";
 import InsuranceHomeScreen from "../VehicleOwnerScreens/InsuranceHomeScreen";
+import ChatbotScreen from "../VehicleOwnerScreens/ChatbotScreen";
 import DrawerContent from "../components/DrawerContent";
 
 const Drawer = createDrawerNavigator();
@@ -66,6 +67,25 @@ export default function VehicleOwnerHomeScreen({ navigation }) {
             headerTitleStyle: { fontSize: 18 },
             drawerIcon: ({ color }) => (
               <Ionicons name="car-sport" size={24} color={color} />
+            ),
+          }}
+        />
+        <Drawer.Screen
+          name="Chat Support"
+          component={ChatbotScreen}
+          options={{
+            headerTitle: "Chat Support",
+            drawerActiveBackgroundColor: "#e4efe4",
+            drawerActiveTintColor: "#00BE00",
+            drawerInactiveTintColor: "#1d1d1d",
+            headerBackgroundContainerStyle: { display: "none" },
+            drawerLabelStyle: {
+              fontSize: 15,
+            },
+            headerTransparent: false,
+            headerTitleStyle: { fontSize: 18 },
+            drawerIcon: ({ color }) => (
+              <Ionicons name="chatbox-ellipses" size={24} color={color} />
             ),
           }}
         />

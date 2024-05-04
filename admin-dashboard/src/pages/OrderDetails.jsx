@@ -111,11 +111,13 @@ export default function OrderDetails() {
 
   return (
     <>
-      <Typography.Title level={2}>Order Details</Typography.Title>
+      <Typography.Title level={2}>Order Details </Typography.Title>
       <Table
         columns={columns}
         dataSource={orders}
         onChange={handleTableChange}
+        scroll={{ x: 768 }}
+        pagination={{ pageSize: 6 }}
         {...{ sortedInfo }}
       />
     </>

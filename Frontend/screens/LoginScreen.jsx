@@ -36,6 +36,7 @@ export default function LoginScreen({ navigation }) {
   );
 
   const handleLoginPress = async () => {
+    console.log("hi");
     let errorMessage = "";
 
     if (!email || !password) {
@@ -61,8 +62,8 @@ export default function LoginScreen({ navigation }) {
         setEmail("");
         setPassword("");
         const userRole = response.data.role;
-        AsyncStorage.setItem("authToken", response.data.token);
-        AsyncStorage.setItem("userRole", userRole);
+        await AsyncStorage.setItem("authToken", response.data.token);
+        await AsyncStorage.setItem("userRole", userRole);
         if (userRole === "VehicleOwner")
           navigation.navigate("VehicleOwnerHomeScreen");
         else if (userRole === "WorkshopOwner")

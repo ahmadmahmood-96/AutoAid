@@ -7,5 +7,6 @@ router.post('/verify-email', authController.verifyEmail);
 router.post('/change-password', authController.changePassword);
 router.post('/verify', authController.verifyOTP);
 router.post('/login', authController.loginUser);
+router.post('/chat', authController.chat);
 
 module.exports = router;

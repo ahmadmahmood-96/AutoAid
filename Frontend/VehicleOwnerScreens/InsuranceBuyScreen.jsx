@@ -204,7 +204,6 @@ const styles = StyleSheet.create({
   },
   productQuantity: {
     fontSize: 15,
-    fontWeight: "bold",
     marginRight: 10,
   },
   productPrice: {

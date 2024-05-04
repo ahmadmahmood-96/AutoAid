@@ -20,7 +20,7 @@ export default function CartScreen({ navigation }) {
 
   useEffect(() => {
     fetchItems();
-  }, []);
+  }, [cartItems]);
 
   const fetchItems = async () => {
     try {

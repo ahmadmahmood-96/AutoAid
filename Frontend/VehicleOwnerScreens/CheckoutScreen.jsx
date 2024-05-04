@@ -73,7 +73,6 @@ export default function CheckoutScreen({ navigation }) {
   const { initPaymentSheet, presentPaymentSheet } = useStripe();
 
   const handleCheckout = async () => {
-    console.log("hi");
     try {
       if (
         !name ||

@@ -37,8 +37,17 @@ const vehicleOwnerSchema = new mongoose.Schema({
         type: Boolean,
     },
     insurance: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Insurance",
+        id: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Insurance",
+        },
+        bought: {
+            type: Date,
+        },
+        isRenewed: {
+            type: Boolean,
+            default: false
+        }
     }
 });
 

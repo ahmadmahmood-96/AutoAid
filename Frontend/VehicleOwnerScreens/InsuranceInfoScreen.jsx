@@ -12,7 +12,12 @@ import {
 } from "react-native";
 import axios from "axios";
 import { useStripe } from "@stripe/stripe-react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Ionicons } from "@expo/vector-icons";
+import { jwtDecode } from "jwt-decode";
+import { decode } from "base-64";
+
+global.atob = decode;
 
 export default function InsuranceInfoScreen({ navigation, route }) {
   const { id, name, price, description, coverage, duration } = route.params;
@@ -45,6 +50,30 @@ export default function InsuranceInfoScreen({ navigation, route }) {
         paymentSheetResponse.error.message
       );
       return;
+    }
+
+    const token = await AsyncStorage.getItem("authToken");
+    const decodedToken = jwtDecode(token);
+    const response = await axios.post(
+      `${baseUrl}insurance/bought-insurance`,
+      {
+        userId: decodedToken.user._id,
+        insuranceId: id,
+        // Pass any other required data about the insurance here
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    if (response.status === 200) {
+      // Handle success
+      navigation.navigate("Home");
+    } else {
+      // Handle error
+      console.error("Failed to save insurance:", response.data);
     }
   };
 

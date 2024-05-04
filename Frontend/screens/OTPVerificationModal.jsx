@@ -1,4 +1,3 @@
-// OTPVerificationModal.js
 import React, { useState, createRef } from "react";
 import {
   Modal,
@@ -10,6 +9,7 @@ import {
   StyleSheet,
   Alert,
 } from "react-native";
+import { Ionicons } from "@expo/vector-icons"; // Import Ionicons for the cross icon
 
 const OTPVerificationModal = ({ isVisible, onConfirm, onCancel, email }) => {
   const [otp, setOtp] = useState(new Array(6).fill(""));
@@ -49,6 +49,9 @@ const OTPVerificationModal = ({ isVisible, onConfirm, onCancel, email }) => {
       <KeyboardAvoidingView behavior={"padding"} style={{ flex: 1 }}>
         <View style={styles.centeredView}>
           <View style={styles.modalView}>
+            <TouchableOpacity style={styles.closeButton} onPress={onCancel}>
+              <Ionicons name="close" size={24} color="#888" />
+            </TouchableOpacity>
             <Text style={styles.modalTitle}>Verify Your Account</Text>
             <Text style={styles.modalSubtitle}>{email}</Text>
             <Text style={styles.modalText}>
@@ -152,6 +155,12 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontSize: 18,
     fontWeight: "bold",
+  },
+  closeButton: {
+    position: "absolute",
+    top: 10,
+    right: 10,
+    padding: 5,
   },
 });
 
