@@ -57,21 +57,6 @@ export default function UserDetails() {
     },
     {
       key: 4,
-      title: "Verified",
-      dataIndex: "isVerified",
-      render: (isVerified) => (
-        <Tag color={isVerified ? "green" : "red"} style={{ fontSize: 14 }}>
-          {isVerified ? "Yes" : "No"}
-        </Tag>
-      ),
-      filters: [
-        { text: "Yes", value: true },
-        { text: "No", value: false },
-      ],
-      onFilter: (value, record) => record.isVerified === value,
-    },
-    {
-      key: 5,
       title: "Blocked",
       dataIndex: "isBlocked",
       render: (isBlocked) => (
@@ -86,7 +71,7 @@ export default function UserDetails() {
       onFilter: (value, record) => record.isBlocked === value,
     },
     {
-      key: 6,
+      key: 5,
       title: "Actions",
       render: (record) => {
         return (
@@ -222,7 +207,12 @@ export default function UserDetails() {
   return (
     <>
       <Typography.Title level={2}>User Details</Typography.Title>
-      <Table columns={columns} dataSource={users} />
+      <Table
+        columns={columns}
+        dataSource={users}
+        scroll={{ x: 768 }}
+        pagination={{ pageSize: 6 }}
+      />
     </>
   );
 }

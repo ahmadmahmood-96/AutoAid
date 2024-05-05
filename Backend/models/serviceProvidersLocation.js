@@ -7,22 +7,18 @@ const serviceProviderLocationSchema = new mongoose.Schema({
         ref: "User",
         required: true,
     },
-    coordinate: {
-        latitude: {
-            type: Number,
-            required: true
+    coordinates: {
+        type: {
+            type: String
         },
-        longitude: {
-            type: Number,
-            required: true
-        }
+        coordinates: [Number], // [longitude, latitude]
     },
-    socketId: {
-        type: String,
-        required: true
-    }
 });
 
-const ServiceProvidersLocation = mongoose.model("Service Providers Location", serviceProviderLocationSchema);
+serviceProviderLocationSchema.index({
+    coordinates: '2dsphere'
+});
+
+const ServiceProvidersLocation = mongoose.model("ServiceProvidersLocation", serviceProviderLocationSchema);
 
 module.exports = ServiceProvidersLocation;

@@ -14,6 +14,7 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
   KeyboardAvoidingView,
+  ActivityIndicator,
 } from "react-native";
 import { TextInput } from "react-native-paper";
 import RNPickerSelect from "react-native-picker-select";
@@ -36,6 +37,7 @@ export default function RegisterScreen({ navigation }) {
   const [licenseNumber, setLicenseNumber] = useState("");
   const [isModalVisible, setModalVisibility] = useState(false);
   const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const clearValue = () => {
     setError("");
@@ -64,6 +66,7 @@ export default function RegisterScreen({ navigation }) {
     setError(errorMessage);
     if (!errorMessage) {
       try {
+        setIsLoading(true);
         const data = {
           name,
           email,
@@ -75,14 +78,15 @@ export default function RegisterScreen({ navigation }) {
           workshopAddress,
           licenseNumber,
         };
-        console.log(data);
         // Make a POST request to the backend API
         await axios.post(`${baseUrl}auth/register`, data);
 
         // Reset the form fields if needed
         setName("");
+        setEmail("");
         setNumber("");
         setPassword("");
+        setConfirmPassword("");
         setSelectedRole("vehicleOwner");
         setVehicleType("");
         setWorkshopName("");
@@ -99,6 +103,8 @@ export default function RegisterScreen({ navigation }) {
           console.log(e.response.data.message);
           setError("Failed to register. Please try again.");
         }
+      } finally {
+        setIsLoading(false);
       }
     }
   };
@@ -372,10 +378,12 @@ export default function RegisterScreen({ navigation }) {
                     <Text style={styles.inputLabel}>License Number</Text>
                     <TextInput
                       mode="outlined"
+                      keyboardType="numeric"
                       style={styles.textInput}
                       value={licenseNumber}
                       placeholder="Enter License Number"
                       onChangeText={setLicenseNumber}
+                      maxLength={6}
                     />
                   </View>
                 )}
@@ -391,13 +399,17 @@ export default function RegisterScreen({ navigation }) {
                   style={styles.register}
                   onPress={handleRegisterPress}
                 >
-                  <Text style={styles.loginButtonText}>Create Account</Text>
-                  <OTPVerificationModal
+                  {isLoading ? (
+                    <ActivityIndicator color="white" />
+                  ) : (
+                    <Text style={styles.loginButtonText}>Create Account</Text>
+                  )}
+                  {/* <OTPVerificationModal
                     isVisible={isModalVisible}
                     onConfirm={verifyOtp}
                     onCancel={() => setModalVisibility(false)}
                     email={email} // Pass the email to the modal for display
-                  />
+                  /> */}
                 </TouchableOpacity>
               </View>
             </View>

@@ -1,5 +1,4 @@
 const baseUrl = process.env.BASE_URL;
-const GOOGLE_PLACES_API_KEY = process.env.GOOGLE_PLACES_API_KEY;
 
 import React, { useState, useEffect } from "react";
 import {
@@ -21,6 +20,7 @@ import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { jwtDecode } from "jwt-decode";
 import { decode } from "base-64";
+const serviceProviderIcon = require("../assets/service-provider-icon.png");
 
 global.atob = decode;
 
@@ -33,6 +33,7 @@ export default function HomeScreen() {
   const [location, setLocation] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
   const [mapLoaded, setMapLoaded] = useState(false);
+  const [serviceProviderLocations, setServiceProviderLocations] = useState([]);
   const [selectedVehicle, setSelectedVehicle] = useState(null);
   const [selectedService, setSelectedService] = useState(null);
   const [price, setPrice] = useState("");
@@ -59,6 +60,33 @@ export default function HomeScreen() {
     }
   }, [selectedService]);
 
+  useEffect(() => {
+    // Fetch service provider locations when the map is loaded
+    if (mapLoaded) {
+      fetchServiceProviderLocations();
+    }
+  }, [mapLoaded]);
+
+  const fetchServiceProviderLocations = async () => {
+    try {
+      const token = await AsyncStorage.getItem("authToken");
+      const response = await axios.get(
+        `${baseUrl}service/providers-locations`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+          params: {
+            latitude: location.coords.latitude,
+            longitude: location.coords.longitude,
+          }, // Pass user's location as query parameters
+        }
+      );
+      setServiceProviderLocations(response.data.serviceProviders);
+      console.log(serviceProviderLocations);
+    } catch (error) {
+      console.error("Error fetching service provider locations:", error);
+    }
+  };
+
   const handleFindServiceProviders = async () => {
     try {
       setIsLoading(true);
@@ -68,13 +96,22 @@ export default function HomeScreen() {
       const token = await AsyncStorage.getItem("authToken");
       const decodedToken = jwtDecode(token);
 
+      const serviceProviderId = serviceProviderLocations[0].serviceProvider;
+
       const serviceData = {
         name: decodedToken.user.name,
         vehicleType: selectedVehicle,
         serviceType: selectedService,
-        latitude: location.coords.latitude,
-        longitude: location.coords.longitude,
+        coordinate: {
+          latitude: location.coords.latitude,
+          longitude: location.coords.longitude,
+        },
         basePrice: price,
+        nearByServiceProvider: {
+          id: serviceProviderId,
+          latitude: serviceProviderLocations[0].coordinates.coordinates[1],
+          longitude: serviceProviderLocations[0].coordinates.coordinates[0],
+        },
       };
 
       const response = await axios.post(
@@ -86,11 +123,6 @@ export default function HomeScreen() {
       if (response.status === 201) {
         console.log(response.data.message);
       }
-
-      // const response = await fetch(
-      //   `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${location.coords.latitude},${location.coords.longitude}&radius=5000&type=${selectedService}&key=${GOOGLE_PLACES_API_KEY}`
-      // );
-      // const data = await response.json();
     } catch (error) {
       console.error("Error finding service providers:", error.message);
     } finally {
@@ -102,7 +134,7 @@ export default function HomeScreen() {
     try {
       const token = await AsyncStorage.getItem("authToken");
       const response = await axios.get(
-        `${baseUrl}service/prices/${selectedService}`,
+        `${baseUrl}service/get-price/${selectedService}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
       const { price } = response.data;
@@ -131,17 +163,18 @@ export default function HomeScreen() {
                 longitudeDelta: LONGITUDE_DELTA,
               }}
             >
-              {/* {serviceProviders.map((provider, index) => (
-                <Marker
-                  key={index}
-                  coordinate={{
-                    latitude: provider.latitude,
-                    longitude: provider.longitude,
-                  }}
-                  title={provider.name}
-                  description={provider.vicinity}
-                />
-              ))} */}
+              {mapLoaded &&
+                serviceProviderLocations.length > 0 &&
+                serviceProviderLocations.map((marker) => (
+                  <Marker
+                    key={marker._id}
+                    coordinate={{
+                      latitude: marker.coordinates.coordinates[1],
+                      longitude: marker.coordinates.coordinates[0],
+                    }}
+                    image={serviceProviderIcon}
+                  />
+                ))}
             </MapView>
           ) : (
             <View style={styles.loadingContainer}>

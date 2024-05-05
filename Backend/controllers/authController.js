@@ -1,8 +1,8 @@
 const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
-const {
-    sendVerificationEmail
-} = require("../utils/sendVerificationEmail");
+// const {
+//     sendVerificationEmail
+// } = require("../utils/sendVerificationEmail");
 const OpenAI = require('openai');
 const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY
@@ -15,7 +15,6 @@ const {
     WorkshopOwner,
     ServiceProvider
 } = require("../models/user");
-const Price = require("../models/price");
 
 exports.registerUser = async (req, res) => {
     try {
@@ -30,7 +29,6 @@ exports.registerUser = async (req, res) => {
             workshopAddress,
             licenseNumber,
         } = req.body;
-        const otp = crypto.randomInt(100000, 1000000);
         let user;
 
         if (selectedRole === 'vehicleOwner') {
@@ -39,8 +37,6 @@ exports.registerUser = async (req, res) => {
                 email,
                 phoneNumber: number,
                 password,
-                otp,
-                isVerified: false,
                 isBlocked: false,
                 vehicleType,
             });
@@ -50,8 +46,6 @@ exports.registerUser = async (req, res) => {
                 email,
                 phoneNumber: number,
                 password,
-                otp,
-                isVerified: false,
                 isBlocked: false,
                 workshopName,
                 workshopAddress,
@@ -62,8 +56,6 @@ exports.registerUser = async (req, res) => {
                 email,
                 phoneNumber: number,
                 password,
-                otp,
-                isVerified: false,
                 isBlocked: false,
                 licenseNumber,
             });
@@ -75,7 +67,6 @@ exports.registerUser = async (req, res) => {
 
         // Save the user to the database
         await user.save();
-        sendVerificationEmail(email, otp);
 
         // Handle the response as needed (e.g., show success message)
         res.status(200).json({
@@ -100,12 +91,6 @@ exports.verifyEmail = async (req, res) => {
     if (!user) {
         return res.json({
             message: 'User does not exist'
-        });
-    }
-
-    if (!user.isVerified) {
-        return res.json({
-            message: 'Email not Verified'
         });
     }
 
@@ -145,45 +130,6 @@ exports.changePassword = async (req, res) => {
     return res.status(201).json({
         message: 'Password is updated'
     });
-};
-
-exports.verifyOTP = async (req, res) => {
-    try {
-        const {
-            email,
-            otpNumber
-        } = req.body;
-
-        // Query the database for the user's OTP
-        const user = await userModel.User.findOne({
-            email
-        });
-
-        if (!user) {
-            return res.send('User not found.');
-        }
-
-        user.isVerified = true;
-        // Check if the OTP matches
-        if (user.otp == otpNumber) {
-            await userModel.User.updateOne({
-                email
-            }, {
-                $unset: {
-                    otp: 1
-                }
-            });
-            res.status(200).json({
-                message: 'Account verified successfully!'
-            });
-        } else {
-            res.json({
-                message: 'Invalid OTP. Please try again.'
-            });
-        }
-    } catch (error) {
-        res.send('An error occurred during verification.');
-    }
 };
 
 const generateAndSendToken = (res, user, role) => {
@@ -237,23 +183,22 @@ exports.loginUser = async (req, res) => {
             } // Use $ne (not equal) to find users other than Admin
         });
 
-
         if (!user) {
-            return res.json({
+            return res.status(400).json({
                 message: 'User does not exist'
             });
         }
 
         if (user.isBlocked) {
-            return res.json({
+            return res.status(400).json({
                 message: 'You are blocked.'
             });
         }
 
         // Check if the password matches (You should use a proper password hashing library for security)
         if (user.password !== password) {
-            return res.json({
-                message: 'Invalid Password'
+            return res.status(400).json({
+                message: 'Wrong Password'
             });
         }
 

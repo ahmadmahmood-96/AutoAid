@@ -18,6 +18,8 @@ import CheckoutScreen from "./VehicleOwnerScreens/CheckoutScreen";
 import InsuranceFormScreen from "./VehicleOwnerScreens/InsuranceFormScreen";
 import InsuranceBuyScreen from "./VehicleOwnerScreens/InsuranceBuyScreen";
 import InsuranceInfoScreen from "./VehicleOwnerScreens/InsuranceInfoScreen";
+import ServiceAcceptedScreen from "./SeviceProviderScreens/ServiceAcceptedScreen";
+
 import { StripeProvider } from "@stripe/stripe-react-native";
 
 const Stack = createNativeStackNavigator();
@@ -103,6 +105,11 @@ export default function App() {
           <Stack.Screen
             name="InsuranceInfoScreen"
             component={InsuranceInfoScreen}
+          />
+          <Stack.Screen
+            name="ServiceProviderServiceAcceptedScreen"
+            component={ServiceAcceptedScreen}
+            // options={{ gestureEnabled: false }}
           />
         </Stack.Navigator>
 

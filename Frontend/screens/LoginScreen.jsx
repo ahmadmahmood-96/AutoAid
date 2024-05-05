@@ -13,6 +13,7 @@ import {
   Keyboard,
   KeyboardAvoidingView,
   Pressable,
+  ActivityIndicator,
 } from "react-native";
 import { TextInput } from "react-native-paper";
 import Icon from "react-native-vector-icons/FontAwesome";
@@ -24,6 +25,7 @@ export default function LoginScreen({ navigation }) {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const clearValue = () => {
     setError("");
@@ -36,7 +38,6 @@ export default function LoginScreen({ navigation }) {
   );
 
   const handleLoginPress = async () => {
-    console.log("hi");
     let errorMessage = "";
 
     if (!email || !password) {
@@ -50,6 +51,7 @@ export default function LoginScreen({ navigation }) {
     setError(errorMessage);
     if (!errorMessage) {
       try {
+        setIsLoading(true);
         const loginData = {
           email,
           password,
@@ -59,26 +61,30 @@ export default function LoginScreen({ navigation }) {
         const response = await axios.post(`${baseUrl}auth/login`, loginData);
 
         // Reset the login form fields
-        setEmail("");
-        setPassword("");
-        const userRole = response.data.role;
-        await AsyncStorage.setItem("authToken", response.data.token);
-        await AsyncStorage.setItem("userRole", userRole);
-        if (userRole === "VehicleOwner")
-          navigation.navigate("VehicleOwnerHomeScreen");
-        else if (userRole === "WorkshopOwner")
-          navigation.navigate("WorkshopOwnerHomeScreen");
-        else if (userRole === "ServiceProvider")
-          navigation.navigate("ServiceProviderHomeScreen");
+        if (response.status === 200) {
+          setEmail("");
+          setPassword("");
+          const userRole = response.data.role;
+          await AsyncStorage.setItem("authToken", response.data.token);
+          await AsyncStorage.setItem("userRole", userRole);
+          if (userRole === "VehicleOwner")
+            navigation.navigate("VehicleOwnerHomeScreen");
+          else if (userRole === "WorkshopOwner")
+            navigation.navigate("WorkshopOwnerHomeScreen");
+          else if (userRole === "ServiceProvider")
+            navigation.navigate("ServiceProviderHomeScreen");
+        }
       } catch (e) {
         // Handle login errors
-        if (e.response && e.response.data && e.response.data.message) {
+        if (e.response.status === 400) {
           // Use the custom error message from the backend
           setError(e.response.data.message);
         } else {
           // For other types of errors, use a generic error message
           setError("Failed to log in. Please try again.");
         }
+      } finally {
+        setIsLoading(false);
       }
     }
   };
@@ -175,7 +181,11 @@ export default function LoginScreen({ navigation }) {
               ) : null}
 
               <TouchableOpacity style={styles.login} onPress={handleLoginPress}>
-                <Text style={styles.loginButtonText}>Login</Text>
+                {isLoading ? (
+                  <ActivityIndicator color="white" />
+                ) : (
+                  <Text style={styles.loginButtonText}>Login</Text>
+                )}
               </TouchableOpacity>
             </View>
           </View>
