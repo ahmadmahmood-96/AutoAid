@@ -133,113 +133,111 @@ const ForgotPasswordScreen = ({ navigation }) => {
   };
 
   return (
-    <KeyboardAvoidingView behavior={"padding"} style={{ flex: 1 }}>
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={true}>
-        <View style={styles.container}>
-          <StatusBar barStyle="auto" />
-          <TouchableOpacity
-            style={styles.backButton}
-            onPress={() => navigation.navigate("LoginScreen")}
-          >
-            <Ionicons name="chevron-back" size={32} color="#ffff" />
-          </TouchableOpacity>
-          <View style={styles.headerContainer}>
-            <View style={styles.headerBox}>
-              <Text style={styles.headerBoxText}>Need Help?</Text>
-              <Text style={styles.headerBoxTextHeading}>
-                Reset Your Password
-              </Text>
-            </View>
-          </View>
-          <View style={styles.bodyContainer}>
-            <Text style={styles.title}>Forgot Password</Text>
-            <Text style={styles.subtitle}>
-              Enter your email to reset your password.
-            </Text>
-
-            {!showFields ? (
-              <>
-                <Text style={styles.inputLabel}>Email Address</Text>
-                <TextInput
-                  mode="outlined"
-                  style={styles.textInput}
-                  placeholder="Enter your email"
-                  autoCapitalize="none"
-                  keyboardType="email-address"
-                  value={email.trim()}
-                  onChangeText={setEmail}
-                />
-                {error ? (
-                  <View style={styles.errorContainer}>
-                    <Icon name="exclamation-circle" size={18} color="red" />
-                    <Text style={styles.errorText}>{error}</Text>
-                  </View>
-                ) : null}
-                <TouchableOpacity
-                  style={styles.login}
-                  onPress={handleForgotPassword}
-                >
-                  <Text style={styles.loginButtonText}>Verify</Text>
-                </TouchableOpacity>
-              </>
-            ) : (
-              <>
-                <Text style={styles.inputLabel}>New Password</Text>
-                <TextInput
-                  mode="outlined"
-                  style={styles.textInput}
-                  placeholder="Enter your new password"
-                  secureTextEntry={!showPassword}
-                  right={
-                    <TextInput.Icon
-                      icon={showPassword ? "eye-off" : "eye"}
-                      onPress={togglePasswordVisibility}
-                    />
-                  }
-                  value={password}
-                  onChangeText={setPassword} // Updating the password state
-                />
-
-                <Text style={styles.inputLabel}>Confirm Password</Text>
-                <TextInput
-                  mode="outlined"
-                  style={styles.textInput}
-                  placeholder="Re-Enter your password"
-                  secureTextEntry={!showConfirmPassword}
-                  right={
-                    <TextInput.Icon
-                      icon={showConfirmPassword ? "eye-off" : "eye"}
-                      onPress={toggleConfirmPasswordVisibility}
-                    />
-                  }
-                  value={confirmPassword}
-                  onChangeText={setConfirmPassword} // Updating the password state
-                />
-                {error ? (
-                  <View style={styles.errorContainer}>
-                    <Icon name="exclamation-circle" size={18} color="red" />
-                    <Text style={styles.errorText}>{error}</Text>
-                  </View>
-                ) : null}
-                <TouchableOpacity
-                  style={styles.login}
-                  onPress={handleChangePassword}
-                >
-                  <Text style={styles.loginButtonText}>Reset Password</Text>
-                </TouchableOpacity>
-              </>
-            )}
-
-            <OTPVerificationModal
-              isVisible={isModalVisible}
-              onConfirm={verifyOtp}
-              onCancel={() => setModalVisibility(false)}
-              email={email} // Pass the email to the modal for display
-            />
+    // <KeyboardAvoidingView behavior={"padding"} style={{ flex: 1 }}>
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={true}>
+      <View style={styles.container}>
+        <StatusBar barStyle="auto" />
+        <TouchableOpacity
+          style={styles.backButton}
+          onPress={() => navigation.navigate("LoginScreen")}
+        >
+          <Ionicons name="chevron-back" size={32} color="#ffff" />
+        </TouchableOpacity>
+        <View style={styles.headerContainer}>
+          <View style={styles.headerBox}>
+            <Text style={styles.headerBoxText}>Need Help?</Text>
+            <Text style={styles.headerBoxTextHeading}>Reset Your Password</Text>
           </View>
         </View>
-      </TouchableWithoutFeedback>
-    </KeyboardAvoidingView>
+        <View style={styles.bodyContainer}>
+          <Text style={styles.title}>Forgot Password</Text>
+          <Text style={styles.subtitle}>
+            Enter your email to reset your password.
+          </Text>
+
+          {!showFields ? (
+            <>
+              <Text style={styles.inputLabel}>Email Address</Text>
+              <TextInput
+                mode="outlined"
+                style={styles.textInput}
+                placeholder="Enter your email"
+                autoCapitalize="none"
+                keyboardType="email-address"
+                value={email.trim()}
+                onChangeText={setEmail}
+              />
+              {error ? (
+                <View style={styles.errorContainer}>
+                  <Icon name="exclamation-circle" size={18} color="red" />
+                  <Text style={styles.errorText}>{error}</Text>
+                </View>
+              ) : null}
+              <TouchableOpacity
+                style={styles.login}
+                onPress={handleForgotPassword}
+              >
+                <Text style={styles.loginButtonText}>Verify</Text>
+              </TouchableOpacity>
+            </>
+          ) : (
+            <>
+              <Text style={styles.inputLabel}>New Password</Text>
+              <TextInput
+                mode="outlined"
+                style={styles.textInput}
+                placeholder="Enter your new password"
+                secureTextEntry={!showPassword}
+                right={
+                  <TextInput.Icon
+                    icon={showPassword ? "eye-off" : "eye"}
+                    onPress={togglePasswordVisibility}
+                  />
+                }
+                value={password}
+                onChangeText={setPassword} // Updating the password state
+              />
+
+              <Text style={styles.inputLabel}>Confirm Password</Text>
+              <TextInput
+                mode="outlined"
+                style={styles.textInput}
+                placeholder="Re-Enter your password"
+                secureTextEntry={!showConfirmPassword}
+                right={
+                  <TextInput.Icon
+                    icon={showConfirmPassword ? "eye-off" : "eye"}
+                    onPress={toggleConfirmPasswordVisibility}
+                  />
+                }
+                value={confirmPassword}
+                onChangeText={setConfirmPassword} // Updating the password state
+              />
+              {error ? (
+                <View style={styles.errorContainer}>
+                  <Icon name="exclamation-circle" size={18} color="red" />
+                  <Text style={styles.errorText}>{error}</Text>
+                </View>
+              ) : null}
+              <TouchableOpacity
+                style={styles.login}
+                onPress={handleChangePassword}
+              >
+                <Text style={styles.loginButtonText}>Reset Password</Text>
+              </TouchableOpacity>
+            </>
+          )}
+
+          <OTPVerificationModal
+            isVisible={isModalVisible}
+            onConfirm={verifyOtp}
+            onCancel={() => setModalVisibility(false)}
+            email={email} // Pass the email to the modal for display
+          />
+        </View>
+      </View>
+    </TouchableWithoutFeedback>
+    // </KeyboardAvoidingView>
   );
 };
 
@@ -272,7 +270,7 @@ const styles = StyleSheet.create({
   },
   headerBox: {
     backgroundColor: "#00a700",
-    padding: 45,
+    paddingVertical: 40,
     borderRadius: 20,
     alignItems: "center",
     justifyContent: "center",
@@ -285,6 +283,7 @@ const styles = StyleSheet.create({
   headerBoxTextHeading: {
     fontSize: 25,
     fontWeight: "bold",
+    textAlign: "center",
   },
 
   button: {

@@ -9,6 +9,7 @@ import {
   Pressable,
   ScrollView,
   SafeAreaView,
+  Image,
 } from "react-native";
 import * as Location from "expo-location";
 import axios from "axios";
@@ -56,7 +57,10 @@ export default function HomeScreen({ navigation }) {
             serviceProviderId: decodedToken.user._id,
           },
         });
-        setServiceRequests(response.data);
+        const filteredRequests = response.data.filter(
+          (request) => request.status !== "Completed"
+        );
+        setServiceRequests(filteredRequests);
       } catch (error) {
         console.error("Error fetching service requests:", error);
       } finally {
@@ -155,10 +159,16 @@ export default function HomeScreen({ navigation }) {
           },
         }
       );
-      if (response.status === 200)
+      if (response.status === 200) {
+        // Extract vehicleOwnerId from the response data
+        const { vehicleOwnerId } = response.data;
+
+        // Navigate to the next screen and pass requestId and vehicleOwnerId as params
         navigation.navigate("ServiceProviderServiceAcceptedScreen", {
           requestId: requestId,
+          vehicleOwnerId: vehicleOwnerId,
         });
+      }
     } catch (error) {
       console.error("Error accepting request:", error);
     }
@@ -177,15 +187,30 @@ export default function HomeScreen({ navigation }) {
                 {serviceRequests && serviceRequests.length > 0 ? (
                   serviceRequests.map((request) => (
                     <Pressable key={request._id} style={styles.requestItem}>
-                      <Text style={styles.textItem}>
-                        Customer Name: {request.name}
-                      </Text>
-                      <Text style={styles.textItem}>
-                        Vehicle Type: {request.vehicleType}
-                      </Text>
-                      <Text style={styles.textItem}>
-                        Service Type: {request.serviceType}
-                      </Text>
+                      <View style={styles.rowContainer}>
+                        <Image source={require("../assets/user-icon.png")} />
+                        <View style={styles.columnContainer}>
+                          <Text style={styles.textHeader}>Customer Name:</Text>
+                          <Text style={styles.textItem}>{request.name}</Text>
+                          <Text style={styles.textHeader}>Vehicle Type:</Text>
+                          <Text style={styles.textItem}>
+                            {request.vehicleType}
+                          </Text>
+                          <Text style={styles.textHeader}>Service Type:</Text>
+                          <Text style={styles.textItem}>
+                            {request.serviceType}
+                          </Text>
+                          <Text style={styles.textHeader}>Base Price:</Text>
+                          <Text
+                            style={[
+                              styles.textItem,
+                              { color: "#00BE00", fontWeight: "700" },
+                            ]}
+                          >
+                            Rs. {request.basePrice}
+                          </Text>
+                        </View>
+                      </View>
                       <View style={styles.buttonContainer}>
                         <TouchableOpacity
                           style={[styles.button, styles.declineButton]}
@@ -214,7 +239,7 @@ export default function HomeScreen({ navigation }) {
                       alignContent: "center",
                     }}
                   >
-                    <Text style={styles.textItem}>
+                    <Text style={styles.textHeader}>
                       No service requests available
                     </Text>
                   </View>
@@ -236,34 +261,45 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     backgroundColor: "#f3f3f3",
   },
-  box: {
+  rowContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  columnContainer: {
     flexDirection: "column",
+    width: "70%",
+    justifyContent: "center",
+    marginTop: 18,
+  },
+  box: {
     padding: 5,
     width: "100%",
   },
   buttonContainer: {
     flexDirection: "row",
+    justifyContent: "flex-end",
   },
   requestItem: {
     backgroundColor: "#ffffff",
-    borderWidth: 1,
-    borderColor: "#ccc",
+    // borderWidth: 2,
+    borderColor: "#00BE00",
     borderRadius: 10,
-    width: "100%", // Adjusted width
-    paddingVertical: 15,
     paddingHorizontal: 35,
-    marginVertical: 10,
+    marginBottom: 8,
     shadowColor: "#000",
     shadowOffset: {
-      width: 0,
+      width: 1,
       height: 2,
     },
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
     elevation: 5,
+    // borderLeftColor: "#00BE00",
+    borderLeftWidth: 4,
   },
   textItem: {
-    marginVertical: 10,
+    marginBottom: 10,
     fontSize: 17,
     fontWeight: "500",
   },
@@ -271,8 +307,9 @@ const styles = StyleSheet.create({
     marginTop: 20,
     margin: 10,
     padding: 7,
+    paddingVertical: 8,
     paddingHorizontal: 40,
-    borderRadius: 18,
+    borderRadius: 10,
     shadowColor: "#000",
     shadowOffset: {
       width: 1,

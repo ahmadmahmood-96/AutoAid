@@ -109,88 +109,90 @@ export default function LoginScreen({ navigation }) {
 
   return (
     <>
-      <KeyboardAvoidingView behavior={"padding"} style={{ flex: 1 }}>
-        <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={true}>
-          <View style={styles.container}>
-            <StatusBar barStyle="auto" />
-            <View style={styles.headerContainer}>
-              <View style={styles.headerBox}>
-                <Text style={styles.headerBoxText}>Hello, There</Text>
-                <Text style={styles.headerBoxTextHeading}>Welcome Back</Text>
-                <View style={styles.buttonContainer}>
-                  <TouchableOpacity
-                    style={[styles.button, styles.loginButton]}
-                    onPress={() => navigation.navigate("LoginScreen")}
-                  >
-                    <Text style={styles.loginText}>Login</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    style={[styles.button, styles.registerButton]}
-                    onPress={() => navigation.navigate("RegisterScreen")}
-                  >
-                    <Text style={styles.registerText}>Register</Text>
-                  </TouchableOpacity>
-                </View>
+      {/* <KeyboardAvoidingView behavior={"padding"} style={{ flex: 1 }}> */}
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={true}>
+        <View style={styles.container}>
+          <StatusBar barStyle="auto" />
+          <View style={styles.headerContainer}>
+            <View style={styles.headerBox}>
+              <Text style={styles.headerBoxText}>Hello, There</Text>
+              <Text style={styles.headerBoxTextHeading}>Welcome Back</Text>
+              <View style={styles.buttonContainer}>
+                <TouchableOpacity
+                  style={[styles.button, styles.loginButton]}
+                  onPress={() => navigation.navigate("LoginScreen")}
+                >
+                  <Text style={styles.loginText}>Login</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={[styles.button, styles.registerButton]}
+                  onPress={() => navigation.navigate("RegisterScreen")}
+                >
+                  <Text style={styles.registerText}>Register</Text>
+                </TouchableOpacity>
               </View>
-            </View>
-            <View style={styles.bodyContainer}>
-              <Text style={styles.title}>Login to Your Account</Text>
-              <Text style={styles.subtitle}>
-                Make sure that you already have an account.
-              </Text>
-
-              <Text style={styles.inputLabel}>Email Address</Text>
-              <TextInput
-                mode="outlined"
-                style={styles.textInput}
-                placeholder="Enter your email"
-                autoCapitalize="none"
-                keyboardType="email-address"
-                value={email.trim()}
-                onChangeText={setEmail} // Updating the email state
-              />
-
-              <Text style={styles.inputLabel}>Password</Text>
-              <TextInput
-                mode="outlined"
-                style={styles.textInput}
-                placeholder="Enter your password"
-                secureTextEntry={!showPassword}
-                right={
-                  <TextInput.Icon
-                    icon={showPassword ? "eye-off" : "eye"}
-                    onPress={togglePasswordVisibility}
-                  />
-                }
-                value={password}
-                onChangeText={setPassword} // Updating the password state
-              />
-              <View style={{ alignSelf: "flex-end", margin: 5 }}>
-                <Pressable onPress={onPressForgotPassword}>
-                  <Text style={styles.forgotPasswordText}>
-                    Forgot Password?
-                  </Text>
-                </Pressable>
-              </View>
-
-              {error ? (
-                <View style={styles.errorContainer}>
-                  <Icon name="exclamation-circle" size={18} color="red" />
-                  <Text style={styles.errorText}>{error}</Text>
-                </View>
-              ) : null}
-
-              <TouchableOpacity style={styles.login} onPress={handleLoginPress}>
-                {isLoading ? (
-                  <ActivityIndicator color="white" />
-                ) : (
-                  <Text style={styles.loginButtonText}>Login</Text>
-                )}
-              </TouchableOpacity>
             </View>
           </View>
-        </TouchableWithoutFeedback>
-      </KeyboardAvoidingView>
+          <View style={styles.bodyContainer}>
+            <Text style={styles.title}>Login to Your Account</Text>
+            <Text style={styles.subtitle}>
+              Make sure that you already have an account.
+            </Text>
+
+            <Text style={styles.inputLabel}>Email Address</Text>
+            <TextInput
+              mode="outlined"
+              style={styles.textInput}
+              placeholder="Enter your email"
+              autoCapitalize="none"
+              keyboardType="email-address"
+              value={email.trim()}
+              onChangeText={setEmail} // Updating the email state
+            />
+
+            <Text style={styles.inputLabel}>Password</Text>
+            <TextInput
+              mode="outlined"
+              style={styles.textInput}
+              placeholder="Enter your password"
+              secureTextEntry={!showPassword}
+              right={
+                <TextInput.Icon
+                  icon={showPassword ? "eye-off" : "eye"}
+                  onPress={togglePasswordVisibility}
+                />
+              }
+              value={password}
+              onChangeText={setPassword} // Updating the password state
+            />
+            <View style={{ alignSelf: "flex-end", margin: 5 }}>
+              <Pressable onPress={onPressForgotPassword}>
+                <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
+              </Pressable>
+            </View>
+
+            {error ? (
+              <View style={styles.errorContainer}>
+                <Icon name="exclamation-circle" size={18} color="red" />
+                <Text style={styles.errorText}>{error}</Text>
+              </View>
+            ) : null}
+
+            <TouchableOpacity
+              style={styles.login}
+              onPress={handleLoginPress}
+              disabled={isLoading}
+            >
+              {isLoading ? (
+                <ActivityIndicator color="black" />
+              ) : (
+                <Text style={styles.loginButtonText}>Login</Text>
+              )}
+            </TouchableOpacity>
+          </View>
+        </View>
+      </TouchableWithoutFeedback>
+      {/* </KeyboardAvoidingView> */}
     </>
   );
 }

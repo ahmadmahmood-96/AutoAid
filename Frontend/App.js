@@ -19,6 +19,10 @@ import InsuranceFormScreen from "./VehicleOwnerScreens/InsuranceFormScreen";
 import InsuranceBuyScreen from "./VehicleOwnerScreens/InsuranceBuyScreen";
 import InsuranceInfoScreen from "./VehicleOwnerScreens/InsuranceInfoScreen";
 import ServiceAcceptedScreen from "./SeviceProviderScreens/ServiceAcceptedScreen";
+import ServiceProcessingScreen from "./VehicleOwnerScreens/ServiceProcessingScreen";
+import ServiceCompletionScreen from "./SeviceProviderScreens/ServiceCompletionScreen";
+import WorkshopDirections from "./VehicleOwnerScreens/WorkshopDirections";
+import AppointmentScreen from "./VehicleOwnerScreens/AppointmentScreen";
 
 import { StripeProvider } from "@stripe/stripe-react-native";
 
@@ -109,7 +113,25 @@ export default function App() {
           <Stack.Screen
             name="ServiceProviderServiceAcceptedScreen"
             component={ServiceAcceptedScreen}
-            // options={{ gestureEnabled: false }}
+            options={{ gestureEnabled: false }}
+          />
+          <Stack.Screen
+            name="ServiceProcessingScreen"
+            component={ServiceProcessingScreen}
+            options={{ gestureEnabled: false }}
+          />
+          <Stack.Screen
+            name="ServiceCompletionScreen"
+            component={ServiceCompletionScreen}
+            options={{ gestureEnabled: false }}
+          />
+          <Stack.Screen
+            name="WorkshopDirectionScreen"
+            component={WorkshopDirections}
+          />
+          <Stack.Screen
+            name="AppointmentScreen"
+            component={AppointmentScreen}
           />
         </Stack.Navigator>
 

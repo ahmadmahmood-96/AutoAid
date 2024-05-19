@@ -2,6 +2,10 @@ const mongoose = require("mongoose");
 
 // Define MongoDB Schema
 const serviceSchema = new mongoose.Schema({
+    vehicleOwnerId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User"
+    },
     name: {
         required: true,
         type: String

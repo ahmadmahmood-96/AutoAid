@@ -4,8 +4,9 @@ const {
     WorkshopOwner,
     ServiceProvider
 } = require("../models/user");
-const Product = require('../models/product');
-const Order = require('../models/order');
+const Product = require("../models/product");
+const Order = require("../models/order");
+const Price = require("../models/price");
 
 exports.getTotalVehicleOwners = async (req, res) => {
     try {
@@ -213,6 +214,98 @@ exports.unblockUser = async (req, res) => {
         return res.json({
             success: false,
             message: 'Internal Server Error'
+        });
+    }
+};
+
+exports.saveServiceTypePrice = async (req, res) => {
+    try {
+        const {
+            serviceType,
+            price,
+        } = req.body;
+
+        const servicePrice = new Price({
+            serviceType,
+            price,
+        });
+
+        // Save the product to the database
+        await servicePrice.save();
+
+        res.status(201).json({
+            message: 'Service type price saved successfully',
+            serviceId: servicePrice._id // Send the ID of the saved service price to the frontend
+        });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            message: 'Internal Server Error'
+        });
+    }
+};
+
+exports.getServiceTypePrices = async (req, res) => {
+    try {
+        const prices = await Price.find();
+        res.json(prices);
+    } catch (error) {
+        res.json({
+            error: 'Internal Server Error'
+        });
+    }
+};
+
+exports.deleteServiceTypePrice = async (req, res) => {
+    try {
+        const {
+            productId
+        } = req.params;
+
+        const product = await Price.findById(productId);
+
+        if (!product) {
+            return res.status(404).json({
+                success: false,
+                error: 'Service type not found'
+            });
+        }
+        // Perform deletion in the database
+        await Price.findByIdAndDelete(productId);
+
+        res.json({
+            success: true,
+            message: 'Service type price deleted successfully'
+        });
+    } catch (error) {
+        res.json({
+            success: false,
+            error: 'Internal Server Error'
+        });
+    }
+};
+
+exports.editServiceTypePrice = async (req, res) => {
+    try {
+        const productId = req.params.productId;
+        const updatedProductData = req.body;
+        const updatedProduct = await Price.findByIdAndUpdate(
+            productId, {
+                $set: updatedProductData
+            }, {
+                new: true
+            }
+        );
+        if (!updatedProduct) {
+            res.json({
+                message: 'Service type not found'
+            });
+        } else res.status(201).json({
+            message: 'Service type price updated successfully'
+        });
+    } catch (error) {
+        res.json({
+            error: 'Error updating service type price'
         });
     }
 };

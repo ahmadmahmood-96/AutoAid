@@ -8,6 +8,7 @@ import {
   UserOutlined,
   ShopOutlined,
   SafetyOutlined,
+  EuroCircleOutlined,
 } from "@ant-design/icons";
 
 const SiderComponent = () => {
@@ -61,6 +62,11 @@ const items = [
     key: "/home/order-details",
     label: "Order Details",
     icon: <ShopOutlined />,
+  },
+  {
+    key: "/home/service-details",
+    label: "Service Details",
+    icon: <EuroCircleOutlined />,
   },
   { key: "logout", label: "Logout", icon: <LogoutOutlined />, danger: true },
 ];

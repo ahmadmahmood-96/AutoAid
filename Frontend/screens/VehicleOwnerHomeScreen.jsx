@@ -7,6 +7,7 @@ import ProductsScreen from "../VehicleOwnerScreens/ProductsScreen";
 import InsuranceHomeScreen from "../VehicleOwnerScreens/InsuranceHomeScreen";
 import ChatbotScreen from "../VehicleOwnerScreens/ChatbotScreen";
 import DrawerContent from "../components/DrawerContent";
+import NearbyWorkshopsScreen from "../VehicleOwnerScreens/NearbyWorkshopsScreen";
 
 const Drawer = createDrawerNavigator();
 
@@ -29,6 +30,25 @@ export default function VehicleOwnerHomeScreen({ navigation }) {
             headerTransparent: true,
             drawerIcon: ({ color }) => (
               <Ionicons name="home-outline" size={24} color={color} />
+            ),
+          }}
+        />
+        <Drawer.Screen
+          name="Find Workshops"
+          component={NearbyWorkshopsScreen}
+          options={{
+            headerTitle: "Nearby Workshops",
+            drawerActiveBackgroundColor: "#e4efe4",
+            drawerActiveTintColor: "#00BE00",
+            drawerInactiveTintColor: "#1d1d1d",
+            headerBackgroundContainerStyle: { display: "none" },
+            drawerLabelStyle: {
+              fontSize: 15,
+            },
+            headerTransparent: true,
+            headerTitleStyle: { fontSize: 18 },
+            drawerIcon: ({ color }) => (
+              <Ionicons name="search-outline" size={24} color={color} />
             ),
           }}
         />

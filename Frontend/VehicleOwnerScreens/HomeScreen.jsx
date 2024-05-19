@@ -11,6 +11,7 @@ import {
   Keyboard,
   TextInput,
   TouchableOpacity,
+  Alert,
 } from "react-native";
 import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
 import * as Location from "expo-location";
@@ -29,7 +30,7 @@ const ASPECT_RATIO = width / height;
 const LATITUDE_DELTA = 0.0922;
 const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
 
-export default function HomeScreen() {
+export default function HomeScreen({ navigation }) {
   const [location, setLocation] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
   const [mapLoaded, setMapLoaded] = useState(false);
@@ -99,6 +100,7 @@ export default function HomeScreen() {
       const serviceProviderId = serviceProviderLocations[0].serviceProvider;
 
       const serviceData = {
+        vehicleOwnerId: decodedToken.user._id,
         name: decodedToken.user.name,
         vehicleType: selectedVehicle,
         serviceType: selectedService,
@@ -121,10 +123,15 @@ export default function HomeScreen() {
       );
 
       if (response.status === 201) {
-        console.log(response.data.message);
+        navigation.navigate("ServiceProcessingScreen", {
+          requestId: response.data.serviceId,
+        });
       }
     } catch (error) {
-      console.error("Error finding service providers:", error.message);
+      Alert.alert(
+        "Error Finding Service Providers",
+        error.response.data.message
+      );
     } finally {
       setIsLoading(false);
     }
@@ -274,7 +281,7 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 30,
     borderTopRightRadius: 30,
     padding: 20,
-    borderStyle: "none",
+    // borderStyle: "none",
     borderTopWidth: 1,
     borderTopColor: "#f7f7f7",
     height: "41%",

@@ -79,8 +79,8 @@ export default function RegisterScreen({ navigation }) {
           licenseNumber,
         };
         // Make a POST request to the backend API
-        await axios.post(`${baseUrl}auth/register`, data);
-
+        const response = await axios.post(`${baseUrl}auth/register`, data);
+        console.log(response.data.message);
         // Reset the form fields if needed
         setName("");
         setEmail("");
@@ -92,7 +92,7 @@ export default function RegisterScreen({ navigation }) {
         setWorkshopName("");
         setWorkshopAddress("");
         setLicenseNumber("");
-        setModalVisibility(true);
+        navigation.navigate("LoginScreen");
       } catch (e) {
         // Handle login errors
         if (e.response && e.response.data && e.response.data.message) {
@@ -105,26 +105,6 @@ export default function RegisterScreen({ navigation }) {
         }
       } finally {
         setIsLoading(false);
-      }
-    }
-  };
-
-  const verifyOtp = async (otp) => {
-    try {
-      const otpNumber = parseInt(otp, 10);
-      await axios.post(`${baseUrl}auth/verify`, {
-        email,
-        otpNumber,
-      });
-
-      // If verification is successful, navigate to the login screen
-      navigation.navigate("LoginScreen");
-    } catch (e) {
-      // Handle errors during verification
-      if (e.response && e.response.data && e.response.data.message) {
-        setError(e.response.data.message);
-      } else {
-        setError("Failed to verify OTP. Please try again.");
       }
     }
   };
@@ -156,266 +136,263 @@ export default function RegisterScreen({ navigation }) {
 
   return (
     <>
-      <KeyboardAvoidingView behavior={"padding"} style={{ flex: 1 }}>
-        <ScrollView>
-          <TouchableWithoutFeedback
-            onPress={Keyboard.dismiss}
-            accessible={true}
-          >
-            <View style={styles.container}>
-              <StatusBar barStyle="auto" />
-              <View style={styles.headerContainer}>
-                <View style={styles.headerBox}>
-                  <Text style={styles.headerBoxText}>Hello, There</Text>
-                  <Text style={styles.headerBoxTextHeading}>
-                    Please Register Yourself
-                  </Text>
-                  <View style={styles.buttonContainer}>
-                    <TouchableOpacity
-                      style={[styles.button, styles.loginButton]}
-                      onPress={() => navigation.navigate("LoginScreen")}
-                    >
-                      <Text style={styles.loginText}>Login</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                      style={[styles.button, styles.registerButton]}
-                      onPress={() => navigation.navigate("RegisterScreen")}
-                    >
-                      <Text style={styles.registerText}>Register</Text>
-                    </TouchableOpacity>
-                  </View>
+      {/* <KeyboardAvoidingView behavior={"padding"} style={{ flex: 1 }}> */}
+      <ScrollView>
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={true}>
+          <View style={styles.container}>
+            <StatusBar barStyle="auto" />
+            <View style={styles.headerContainer}>
+              <View style={styles.headerBox}>
+                <Text style={styles.headerBoxText}>Hello, There</Text>
+                <Text style={styles.headerBoxTextHeading}>
+                  Please Register Yourself
+                </Text>
+                <View style={styles.buttonContainer}>
+                  <TouchableOpacity
+                    style={[styles.button, styles.loginButton]}
+                    onPress={() => navigation.navigate("LoginScreen")}
+                  >
+                    <Text style={styles.loginText}>Login</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={[styles.button, styles.registerButton]}
+                    onPress={() => navigation.navigate("RegisterScreen")}
+                  >
+                    <Text style={styles.registerText}>Register</Text>
+                  </TouchableOpacity>
                 </View>
               </View>
-              <View style={styles.bodyContainer}>
-                <Text style={styles.title}>Create Your Account</Text>
-                <Text style={styles.subtitle}>
-                  Make sure your account stay secure.
-                </Text>
-                <View style={styles.roleContainer}>
-                  <Text style={styles.options}>Select Your Role</Text>
-                  <View style={styles.roleButtons}>
-                    <TouchableOpacity
-                      style={[
-                        styles.roleButton,
+            </View>
+            <View style={styles.bodyContainer}>
+              <Text style={styles.title}>Create Your Account</Text>
+              <Text style={styles.subtitle}>
+                Make sure your account stay secure.
+              </Text>
+              <View style={styles.roleContainer}>
+                <Text style={styles.options}>Select Your Role</Text>
+                <View style={styles.roleButtons}>
+                  <TouchableOpacity
+                    style={[
+                      styles.roleButton,
+                      selectedRole === "vehicleOwner" &&
+                        styles.selectedRoleButton,
+                    ]}
+                    onPress={() => setSelectedRole("vehicleOwner")}
+                  >
+                    <Text
+                      style={
                         selectedRole === "vehicleOwner" &&
-                          styles.selectedRoleButton,
-                      ]}
-                      onPress={() => setSelectedRole("vehicleOwner")}
+                        styles.selectedRoleButton
+                      }
                     >
-                      <Text
-                        style={
-                          selectedRole === "vehicleOwner" &&
-                          styles.selectedRoleButton
-                        }
-                      >
-                        Vehicle Owner
-                      </Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                      style={[
-                        styles.roleButton,
+                      Vehicle Owner
+                    </Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={[
+                      styles.roleButton,
+                      selectedRole === "workshopOwner" &&
+                        styles.selectedRoleButton,
+                    ]}
+                    onPress={() => setSelectedRole("workshopOwner")}
+                  >
+                    <Text
+                      style={
                         selectedRole === "workshopOwner" &&
-                          styles.selectedRoleButton,
-                      ]}
-                      onPress={() => setSelectedRole("workshopOwner")}
+                        styles.selectedRoleButton
+                      }
                     >
-                      <Text
-                        style={
-                          selectedRole === "workshopOwner" &&
-                          styles.selectedRoleButton
-                        }
-                      >
-                        Workshop Owner
-                      </Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                      style={[
-                        styles.roleButton,
+                      Workshop Owner
+                    </Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={[
+                      styles.roleButton,
+                      selectedRole === "serviceProvider" &&
+                        styles.selectedRoleButton,
+                    ]}
+                    onPress={() => setSelectedRole("serviceProvider")}
+                  >
+                    <Text
+                      style={
                         selectedRole === "serviceProvider" &&
-                          styles.selectedRoleButton,
-                      ]}
-                      onPress={() => setSelectedRole("serviceProvider")}
+                        styles.selectedRoleButton
+                      }
                     >
-                      <Text
-                        style={
-                          selectedRole === "serviceProvider" &&
-                          styles.selectedRoleButton
-                        }
-                      >
-                        Service Provider
-                      </Text>
-                    </TouchableOpacity>
-                  </View>
+                      Service Provider
+                    </Text>
+                  </TouchableOpacity>
                 </View>
+              </View>
 
-                <Text style={styles.inputLabel}>Full Name</Text>
-                <TextInput
-                  mode="outlined"
-                  style={styles.textInput}
-                  placeholder="Enter your full name"
-                  keyboardType="default"
-                  value={name}
-                  onChangeText={setName} // Updating the email state
-                />
+              <Text style={styles.inputLabel}>Full Name</Text>
+              <TextInput
+                mode="outlined"
+                style={styles.textInput}
+                placeholder="Enter your full name"
+                keyboardType="default"
+                value={name}
+                onChangeText={setName} // Updating the email state
+              />
 
-                <Text style={styles.inputLabel}>Email Address</Text>
-                <TextInput
-                  mode="outlined"
-                  style={styles.textInput}
-                  placeholder="Enter your email"
-                  autoCapitalize="none"
-                  keyboardType="email-address"
-                  value={email.trim()}
-                  onChangeText={setEmail} // Updating the email state
-                />
+              <Text style={styles.inputLabel}>Email Address</Text>
+              <TextInput
+                mode="outlined"
+                style={styles.textInput}
+                placeholder="Enter your email"
+                autoCapitalize="none"
+                keyboardType="email-address"
+                value={email.trim()}
+                onChangeText={setEmail} // Updating the email state
+              />
 
-                <Text style={styles.inputLabel}>Phone Number</Text>
-                <TextInput
-                  mode="outlined"
-                  style={styles.textInput}
-                  placeholder="Enter your phone number"
-                  keyboardType="number-pad"
-                  value={number}
-                  onChangeText={(text) =>
-                    setNumber(formatPhoneNumber(text.replace(/-/g, "")))
-                  }
-                  maxLength={12} // 4 digits, dash, 7 digits
-                />
+              <Text style={styles.inputLabel}>Phone Number</Text>
+              <TextInput
+                mode="outlined"
+                style={styles.textInput}
+                placeholder="Enter your phone number"
+                keyboardType="number-pad"
+                value={number}
+                onChangeText={(text) =>
+                  setNumber(formatPhoneNumber(text.replace(/-/g, "")))
+                }
+                maxLength={12} // 4 digits, dash, 7 digits
+              />
 
-                <Text style={styles.inputLabel}>Password</Text>
-                <TextInput
-                  mode="outlined"
-                  style={styles.textInput}
-                  placeholder="Enter your password"
-                  secureTextEntry={!showPassword}
-                  right={
-                    <TextInput.Icon
-                      icon={showPassword ? "eye-off" : "eye"}
-                      onPress={togglePasswordVisibility}
-                    />
-                  }
-                  value={password}
-                  onChangeText={setPassword} // Updating the password state
-                />
+              <Text style={styles.inputLabel}>Password</Text>
+              <TextInput
+                mode="outlined"
+                style={styles.textInput}
+                placeholder="Enter your password"
+                secureTextEntry={!showPassword}
+                right={
+                  <TextInput.Icon
+                    icon={showPassword ? "eye-off" : "eye"}
+                    onPress={togglePasswordVisibility}
+                  />
+                }
+                value={password}
+                onChangeText={setPassword} // Updating the password state
+              />
 
-                <Text style={styles.inputLabel}>Confirm Password</Text>
-                <TextInput
-                  mode="outlined"
-                  style={styles.textInput}
-                  placeholder="Re-Enter your password"
-                  secureTextEntry={!showConfirmPassword}
-                  right={
-                    <TextInput.Icon
-                      icon={showConfirmPassword ? "eye-off" : "eye"}
-                      onPress={toggleConfirmPasswordVisibility}
-                    />
-                  }
-                  value={confirmPassword}
-                  onChangeText={setConfirmPassword} // Updating the password state
-                />
+              <Text style={styles.inputLabel}>Confirm Password</Text>
+              <TextInput
+                mode="outlined"
+                style={styles.textInput}
+                placeholder="Re-Enter your password"
+                secureTextEntry={!showConfirmPassword}
+                right={
+                  <TextInput.Icon
+                    icon={showConfirmPassword ? "eye-off" : "eye"}
+                    onPress={toggleConfirmPasswordVisibility}
+                  />
+                }
+                value={confirmPassword}
+                onChangeText={setConfirmPassword} // Updating the password state
+              />
 
-                {selectedRole === "vehicleOwner" && (
-                  <View style={styles.bodyContainer}>
-                    <Text style={styles.inputLabel}>Select Vehicle Type:</Text>
-                    <RNPickerSelect
-                      onValueChange={(value) => setVehicleType(value)}
-                      items={[
-                        { label: "Car", value: "car" },
-                        { label: "Bike", value: "bike" },
-                      ]}
-                      style={{
-                        inputIOS: {
-                          backgroundColor: "#fbfbfb",
-                          height: 50,
-                          width: "90%",
-                          borderWidth: 1,
-                          borderColor: "#7c7c7c",
-                          borderRadius: 5,
-                          padding: 10,
-                          color: "#333",
-                          marginLeft: 20,
-                        },
-                        inputAndroid: {
-                          backgroundColor: "#fbfbfb",
-                          height: 50,
-                          width: "90%",
-                          borderWidth: 1,
-                          borderColor: "#7c7c7c",
-                          borderRadius: 5,
-                          padding: 10,
-                          color: "#333",
-                          marginLeft: 20,
-                        },
-                      }}
-                    />
-                  </View>
+              {selectedRole === "vehicleOwner" && (
+                <View style={styles.bodyContainer}>
+                  <Text style={styles.inputLabel}>Select Vehicle Type:</Text>
+                  <RNPickerSelect
+                    onValueChange={(value) => setVehicleType(value)}
+                    items={[
+                      { label: "Car", value: "car" },
+                      { label: "Bike", value: "bike" },
+                    ]}
+                    style={{
+                      inputIOS: {
+                        backgroundColor: "#fbfbfb",
+                        height: 50,
+                        width: "90%",
+                        borderWidth: 1,
+                        borderColor: "#7c7c7c",
+                        borderRadius: 5,
+                        padding: 10,
+                        color: "#333",
+                        marginLeft: 20,
+                      },
+                      inputAndroid: {
+                        backgroundColor: "#fbfbfb",
+                        height: 50,
+                        width: "90%",
+                        borderWidth: 1,
+                        borderColor: "#7c7c7c",
+                        borderRadius: 5,
+                        padding: 10,
+                        color: "#333",
+                        marginLeft: 20,
+                      },
+                    }}
+                  />
+                </View>
+              )}
+
+              {selectedRole === "workshopOwner" && (
+                <View style={styles.bodyContainer}>
+                  <Text style={styles.inputLabel}>Workshop Name</Text>
+                  <TextInput
+                    mode="outlined"
+                    style={styles.textInput}
+                    value={workshopName}
+                    placeholder="Enter Workshop Name"
+                    onChangeText={setWorkshopName}
+                  />
+
+                  <Text style={styles.inputLabel}>Workshop Address</Text>
+                  <TextInput
+                    mode="outlined"
+                    style={styles.textInput}
+                    value={workshopAddress}
+                    onChangeText={setWorkshopAddress}
+                    placeholder="Enter Workshop Address"
+                  />
+                </View>
+              )}
+
+              {selectedRole === "serviceProvider" && (
+                <View style={styles.bodyContainer}>
+                  <Text style={styles.inputLabel}>License Number</Text>
+                  <TextInput
+                    mode="outlined"
+                    keyboardType="numeric"
+                    style={styles.textInput}
+                    value={licenseNumber}
+                    placeholder="Enter License Number"
+                    onChangeText={setLicenseNumber}
+                    maxLength={6}
+                  />
+                </View>
+              )}
+
+              {error ? (
+                <View style={styles.errorContainer}>
+                  <Icon name="exclamation-circle" size={18} color="red" />
+                  <Text style={styles.errorText}>{error}</Text>
+                </View>
+              ) : null}
+
+              <TouchableOpacity
+                style={styles.register}
+                onPress={handleRegisterPress}
+              >
+                {isLoading ? (
+                  <ActivityIndicator color="white" />
+                ) : (
+                  <Text style={styles.loginButtonText}>Create Account</Text>
                 )}
-
-                {selectedRole === "workshopOwner" && (
-                  <View style={styles.bodyContainer}>
-                    <Text style={styles.inputLabel}>Workshop Name</Text>
-                    <TextInput
-                      mode="outlined"
-                      style={styles.textInput}
-                      value={workshopName}
-                      placeholder="Enter Workshop Name"
-                      onChangeText={setWorkshopName}
-                    />
-
-                    <Text style={styles.inputLabel}>Workshop Address</Text>
-                    <TextInput
-                      mode="outlined"
-                      style={styles.textInput}
-                      value={workshopAddress}
-                      onChangeText={setWorkshopAddress}
-                      placeholder="Enter Workshop Address"
-                    />
-                  </View>
-                )}
-
-                {selectedRole === "serviceProvider" && (
-                  <View style={styles.bodyContainer}>
-                    <Text style={styles.inputLabel}>License Number</Text>
-                    <TextInput
-                      mode="outlined"
-                      keyboardType="numeric"
-                      style={styles.textInput}
-                      value={licenseNumber}
-                      placeholder="Enter License Number"
-                      onChangeText={setLicenseNumber}
-                      maxLength={6}
-                    />
-                  </View>
-                )}
-
-                {error ? (
-                  <View style={styles.errorContainer}>
-                    <Icon name="exclamation-circle" size={18} color="red" />
-                    <Text style={styles.errorText}>{error}</Text>
-                  </View>
-                ) : null}
-
-                <TouchableOpacity
-                  style={styles.register}
-                  onPress={handleRegisterPress}
-                >
-                  {isLoading ? (
-                    <ActivityIndicator color="white" />
-                  ) : (
-                    <Text style={styles.loginButtonText}>Create Account</Text>
-                  )}
-                  {/* <OTPVerificationModal
+                {/* <OTPVerificationModal
                     isVisible={isModalVisible}
                     onConfirm={verifyOtp}
                     onCancel={() => setModalVisibility(false)}
                     email={email} // Pass the email to the modal for display
                   /> */}
-                </TouchableOpacity>
-              </View>
+              </TouchableOpacity>
             </View>
-          </TouchableWithoutFeedback>
-        </ScrollView>
-      </KeyboardAvoidingView>
+          </View>
+        </TouchableWithoutFeedback>
+      </ScrollView>
+      {/* </KeyboardAvoidingView> */}
     </>
   );
 }
@@ -536,7 +513,7 @@ const styles = StyleSheet.create({
   },
   roleContainer: {
     marginBottom: 20,
-    width: "91%",
+    width: "92%",
   },
   options: {
     fontSize: 16,

@@ -77,7 +77,7 @@ export default function InsuranceFormScreen({ navigation }) {
       };
 
       const response = await axios.post(
-        `http://192.168.0.101:5000/predict`,
+        `http://172.20.6.57:5000/predict`,
         inputData
       );
 

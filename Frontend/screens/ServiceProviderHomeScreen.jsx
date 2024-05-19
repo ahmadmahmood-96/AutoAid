@@ -1,19 +1,11 @@
 import { createDrawerNavigator } from "@react-navigation/drawer";
 
 import { Ionicons } from "@expo/vector-icons";
-import React, { useState, useEffect } from "react";
-import {
-  StyleSheet,
-  View,
-  Text,
-  StatusBar,
-  TouchableOpacity,
-} from "react-native";
+import React from "react";
+import { StyleSheet } from "react-native";
 import DrawerContent from "../components/DrawerContent";
 import HomeScreen from "../SeviceProviderScreens/HomeScreen";
 const Drawer = createDrawerNavigator();
-
-import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function ServiceProviderHomeScreen({ navigation }) {
   return (

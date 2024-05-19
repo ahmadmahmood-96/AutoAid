@@ -1,6 +1,11 @@
 const Price = require("../models/price");
 const Service = require("../models/service");
 const ServiceProvidersLocation = require("../models/serviceProvidersLocation");
+const {
+    VehicleOwner,
+    ServiceProvider
+} = require("../models/user");
+const Complaint = require("../models/complaint");
 
 exports.getPrice = async (req, res) => {
     try {
@@ -30,6 +35,7 @@ exports.bookService = async (req, res) => {
     try {
         // Extract data from the request body
         const {
+            vehicleOwnerId,
             name,
             vehicleType,
             serviceType,
@@ -39,8 +45,24 @@ exports.bookService = async (req, res) => {
             status
         } = req.body;
 
+        // Check if the vehicle owner has already made a service request
+        const existingServiceRequest = await Service.findOne({
+            vehicleOwnerId: vehicleOwnerId,
+            status: {
+                $nin: ["Completed", "Cancelled"] // $nin is used to match documents where the field value is not in the specified array
+            }
+        });
+
+
+        if (existingServiceRequest) {
+            return res.status(400).json({
+                message: "Vehicle owner already has a pending service request"
+            });
+        }
+
         // Create a new service object
         const service = new Service({
+            vehicleOwnerId,
             name,
             vehicleType,
             serviceType,
@@ -55,7 +77,8 @@ exports.bookService = async (req, res) => {
 
         // Send a success response
         res.status(201).json({
-            message: "Service booked successfully"
+            message: "Looking for Nearby ServiceProviders",
+            serviceId: service._id
         });
     } catch (error) {
         console.error("Error booking service:", error);
@@ -64,6 +87,7 @@ exports.bookService = async (req, res) => {
         });
     }
 };
+
 
 // Endpoint to fetch service requests based on service provider ID
 exports.getServiceRequests = async (req, res) => {
@@ -77,7 +101,6 @@ exports.getServiceRequests = async (req, res) => {
             "nearByServiceProvider.id": serviceProviderId,
             status: "Pending"
         });
-
         res.json(serviceRequests);
     } catch (error) {
         console.error("Error fetching service requests:", error);
@@ -222,12 +245,26 @@ exports.acceptServiceRequest = async (req, res) => {
         const {
             requestId
         } = req.params;
+
+        // Find the service request by ID
+        const serviceRequest = await Service.findById(requestId);
+
+        // Check if the service request exists
+        if (!serviceRequest) {
+            return res.status(404).json({
+                error: 'Service request not found'
+            });
+        }
+
         // Update the status of the service request to 'Accepted'
         await Service.findByIdAndUpdate(requestId, {
             status: 'Accepted'
         });
+
+        // Return the response with the vehicle owner ID
         res.status(200).json({
-            message: 'Service request accepted successfully'
+            message: 'Service request accepted successfully',
+            vehicleOwnerId: serviceRequest.vehicleOwnerId
         });
     } catch (error) {
         console.error('Error accepting service request:', error);
@@ -237,7 +274,7 @@ exports.acceptServiceRequest = async (req, res) => {
     }
 };
 
-// Controller function to fetch details of a service request
+
 exports.getServiceRequestDetails = async (req, res) => {
     try {
         const {
@@ -250,10 +287,13 @@ exports.getServiceRequestDetails = async (req, res) => {
                 error: 'Service request not found'
             });
         }
+
         // Extract necessary details from the service request and send as response
         const {
             coordinate,
-            nearByServiceProvider
+            nearByServiceProvider,
+            vehicleOwnerId,
+            name
         } = serviceRequest;
         const userLocation = {
             latitude: coordinate.latitude,
@@ -263,14 +303,191 @@ exports.getServiceRequestDetails = async (req, res) => {
             latitude: nearByServiceProvider.latitude,
             longitude: nearByServiceProvider.longitude
         };
+
+        // Fetch the vehicle owner's phone number directly
+        const vehicleOwner = await VehicleOwner.findById(vehicleOwnerId);
+        const vehicleOwnerPhoneNumber = vehicleOwner.phoneNumber;
+
         res.status(200).json({
             userLocation,
-            serviceProviderLocation
+            serviceProviderLocation,
+            vehicleOwnerPhoneNumber,
+            vehicleOwnerName: name
         });
     } catch (error) {
         console.error('Error fetching service request details:', error);
         res.status(500).json({
             error: 'Internal server error'
+        });
+    }
+};
+
+exports.getServiceRequestDetailsByVehicleOwner = async (req, res) => {
+    try {
+        const {
+            requestId
+        } = req.params;
+        // Find the service request by ID
+        const serviceRequest = await Service.findById(requestId);
+        if (!serviceRequest) {
+            return res.status(404).json({
+                error: 'Service request not found'
+            });
+        }
+
+        // Extract necessary details from the service request and send as response
+        const {
+            coordinate,
+            nearByServiceProvider,
+        } = serviceRequest;
+        const userLocation = {
+            latitude: coordinate.latitude,
+            longitude: coordinate.longitude
+        };
+        const serviceProviderLocation = {
+            latitude: nearByServiceProvider.latitude,
+            longitude: nearByServiceProvider.longitude
+        };
+
+        // Fetch the vehicle owner's phone number directly
+        const serviceProvider = await ServiceProvider.findById(nearByServiceProvider.id);
+        const serviceProviderPhoneNumber = serviceProvider.phoneNumber;
+        const serviceProviderName = serviceProvider.name;
+
+        res.status(200).json({
+            userLocation,
+            serviceProviderLocation,
+            serviceProviderPhoneNumber,
+            serviceProviderName
+        });
+    } catch (error) {
+        console.error('Error fetching service request details:', error);
+        res.status(500).json({
+            error: 'Internal server error'
+        });
+    }
+};
+
+exports.updateServiceRequest = async (req, res) => {
+    try {
+        const {
+            id
+        } = req.params;
+        const {
+            price
+        } = req.body;
+
+        // Find the service request by ID
+        const serviceRequest = await Service.findById(id);
+
+        // Update status to "Completed" and final price
+        serviceRequest.status = 'Completed';
+        serviceRequest.basePrice = price;
+
+        // Save the changes
+        await serviceRequest.save();
+
+        res.status(200).json({
+            message: 'Service request updated successfully'
+        });
+    } catch (error) {
+        console.error('Error updating service request:', error);
+        res.status(500).json({
+            error: 'Internal server error'
+        });
+    }
+};
+
+exports.cancelServiceRequest = async (req, res) => {
+    try {
+        const {
+            requestId
+        } = req.params;
+        // Update the status of the service request to "Cancelled"
+        const updatedRequest = await Service.findByIdAndUpdate(requestId, {
+            status: "Cancelled"
+        }, {
+            new: true
+        });
+
+        // Handle if request is not found
+        if (!updatedRequest) {
+            return res.status(404).json({
+                message: "Service request not found"
+            });
+        }
+
+        // Navigate the user back to the previous screen (assuming you're using a frontend framework like React Navigation)
+        res.json({
+            message: "Service request cancelled successfully"
+        });
+    } catch (error) {
+        console.error("Error cancelling service request:", error);
+        res.status(500).json({
+            message: "Internal server error"
+        });
+    }
+};
+
+exports.getServiceRequestStatus = async (req, res) => {
+    try {
+        const requestId = req.params.requestId;
+        const serviceRequest = await Service.findById(requestId);
+        if (!serviceRequest) {
+            return res.status(404).json({
+                message: "Service request not found"
+            });
+        }
+        res.status(200).json({
+            status: serviceRequest.status
+        });
+    } catch (error) {
+        console.error("Error fetching service request status:", error);
+        res.status(500).json({
+            message: "Internal server error"
+        });
+    }
+};
+
+exports.submitComplaint = async (req, res) => {
+    try {
+        const {
+            requestId
+        } = req.params;
+
+        // Find the service request from the Service model
+        const serviceRequest = await Service.findById(requestId);
+        if (!serviceRequest) {
+            return res.status(404).json({
+                message: 'Service request not found'
+            });
+        }
+
+        // Extract the service provider id from the service request
+        const serviceProviderId = serviceRequest.nearByServiceProvider.id;
+
+        // Extract complaint text from the request body
+        const {
+            complaintText
+        } = req.body;
+
+        // Create a new complaint instance
+        const complaint = new Complaint({
+            serviceProviderId: serviceProviderId,
+            complaintText,
+        });
+
+        // Save the complaint to the database
+        await complaint.save();
+
+        // Respond with a success message
+        return res.status(200).json({
+            message: 'Complaint submitted successfully'
+        });
+    } catch (error) {
+        console.error("Error fetching service request status:", error);
+        res.status(500).json({
+            message: "Internal server error"
         });
     }
 };

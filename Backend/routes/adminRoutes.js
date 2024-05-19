@@ -14,5 +14,9 @@ router.get('/total-users', adminController.getUsers);
 router.delete('/delete-user/:userId', adminController.deleteUser);
 router.put('/block-user/:userId', adminController.blockUser);
 router.put('/unblock-user/:userId', adminController.unblockUser);
+router.post('/save-service-type-prices', adminController.saveServiceTypePrice);
+router.get('/get-service-types-prices', adminController.getServiceTypePrices);
+router.delete('/delete-service-type-price/:productId', adminController.deleteServiceTypePrice);
+router.put('/edit-service-type-price/:productId', adminController.editServiceTypePrice);
 
 module.exports = router;

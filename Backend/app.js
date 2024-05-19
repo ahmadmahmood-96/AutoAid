@@ -15,12 +15,16 @@ const paymentRoutes = require("./routes/paymentRoutes");
 const adminRoutes = require("./routes/adminRoutes");
 const insuranceRoutes = require("./routes/insuranceRoutes");
 const serviceRoutes = require("./routes/serviceRoutes");
+const workshopRoutes = require("./routes/workshopRoutes");
 
 // Importing Verifying Token Middleware
 const verifyToken = require("./middleware/verify");
 
 // Middleware
-app.use(cors());
+app.use(cors({
+    origin: true,
+    credentials: true
+}));
 app.use(bodyParser.json({
     limit: '50mb'
 }));
@@ -48,6 +52,7 @@ app.use('/payment', paymentRoutes);
 app.use('/admin', verifyToken, adminRoutes);
 app.use('/insurance', verifyToken, insuranceRoutes);
 app.use('/service', verifyToken, serviceRoutes);
+app.use('/workshop', verifyToken, workshopRoutes);
 
 // Server Listening
 app.listen(port, () => {
