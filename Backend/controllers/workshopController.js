@@ -221,6 +221,31 @@ exports.getUserAppointment = async (req, res) => {
         const appointments = await Appointment.findOne({
             userId
         });
+        console.log(appointments)
+        if (!appointments) {
+            return res.status(201).json({
+                message: 'No appointments found for this user'
+            });
+        }
+
+        res.status(200).json({
+            appointments
+        });
+    } catch (error) {
+        console.error('Error fetching appointments:', error);
+        res.status(500).json({
+            error: 'Server error'
+        });
+    }
+};
+
+exports.getWorkshopAppointment = async (req, res) => {
+    try {
+        const workshopId = req.params.id;
+
+        const appointments = await Appointment.find({
+            workshopId
+        });
 
         if (!appointments) {
             return res.status(201).json({
@@ -235,6 +260,30 @@ exports.getUserAppointment = async (req, res) => {
         console.error('Error fetching appointments:', error);
         res.status(500).json({
             error: 'Server error'
+        });
+    }
+};
+
+exports.deleteAppointment = async (req, res) => {
+    const appointmentId = req.params.id;
+
+    try {
+        const deletedAppointment = await Appointment.findByIdAndDelete(appointmentId);
+
+        if (!deletedAppointment) {
+            return res.status(404).json({
+                message: 'Appointment not found'
+            });
+        }
+
+        res.json({
+            message: 'Appointment deleted successfully',
+            appointment: deletedAppointment
+        });
+    } catch (error) {
+        console.error('Error deleting appointment:', error);
+        res.status(500).json({
+            error: 'Internal server error'
         });
     }
 };

@@ -212,194 +212,191 @@ export default function CheckoutScreen({ navigation }) {
 
   return (
     <>
-      <KeyboardAvoidingView behavior={"padding"} style={{ flex: 1 }}>
-        <ScrollView>
-          <TouchableWithoutFeedback
-            onPress={Keyboard.dismiss}
-            accessible={true}
-          >
-            <View style={styles.container}>
-              <TouchableOpacity
-                style={styles.backButton}
-                onPress={() => navigation.navigate("CartScreen")}
-              >
-                <Ionicons name="chevron-back" size={32} color="#ffff" />
-              </TouchableOpacity>
-              <StatusBar barStyle="auto" />
-              <View style={styles.headerContainer}>
-                <View style={styles.headerBox}>
-                  <Text style={styles.headerBoxText}>Checkout</Text>
-                  <Text style={styles.headerBoxTextHeading}>
-                    Complete Your Order
-                  </Text>
-                </View>
-              </View>
-              <View style={styles.bodyContainer}>
-                <Text style={styles.title}>Checkout</Text>
-                <Text style={styles.subtitle}>
-                  Complete your order by filling out the required information.
+      {/* <KeyboardAvoidingView behavior={"padding"} style={{ flex: 1 }}> */}
+      <ScrollView>
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={true}>
+          <View style={styles.container}>
+            <TouchableOpacity
+              style={styles.backButton}
+              onPress={() => navigation.navigate("CartScreen")}
+            >
+              <Ionicons name="chevron-back" size={32} color="#ffff" />
+            </TouchableOpacity>
+            <StatusBar barStyle="auto" />
+            <View style={styles.headerContainer}>
+              <View style={styles.headerBox}>
+                <Text style={styles.headerBoxText}>Checkout</Text>
+                <Text style={styles.headerBoxTextHeading}>
+                  Complete Your Order
                 </Text>
-
-                <Text style={styles.inputLabel}>Full Name</Text>
-                <TextInput
-                  mode="outlined"
-                  style={styles.textInput}
-                  placeholder="Enter your full name"
-                  keyboardType="default"
-                  value={name}
-                  onChangeText={setName} // Update the name state
-                />
-
-                <Text style={styles.inputLabel}>Email Address</Text>
-                <TextInput
-                  mode="outlined"
-                  style={styles.textInput}
-                  placeholder="Enter your email"
-                  autoCapitalize="none"
-                  keyboardType="email-address"
-                  value={email}
-                  onChangeText={setEmail} // Update the email state
-                />
-
-                <Text style={styles.inputLabel}>Phone Number</Text>
-                <TextInput
-                  mode="outlined"
-                  style={styles.textInput}
-                  placeholder="Enter your phone number"
-                  keyboardType="phone-pad"
-                  value={number}
-                  onChangeText={(text) =>
-                    setNumber(formatPhoneNumber(text.replace(/-/g, "")))
-                  }
-                  maxLength={12} // 4 digits, dash, 7 digits
-                />
-
-                <Text style={styles.inputLabel}>Home Address</Text>
-                <TextInput
-                  mode="outlined"
-                  style={styles.textInput}
-                  placeholder="Enter your home address"
-                  value={homeAddress}
-                  onChangeText={setHomeAddress} // Update the homeAddress state
-                />
-
-                <Text style={styles.inputLabel}>Street Address</Text>
-                <TextInput
-                  mode="outlined"
-                  style={styles.textInput}
-                  placeholder="Enter your street address"
-                  value={streetAddress}
-                  onChangeText={setStreetAddress} // Update the streetAddress state
-                />
-
-                <Text style={styles.inputLabel}>Town (Optional)</Text>
-                <TextInput
-                  mode="outlined"
-                  style={styles.textInput}
-                  placeholder="Enter your town"
-                  value={town}
-                  onChangeText={setTown} // Update the town state
-                />
-
-                <Text style={styles.inputLabel}>Postal Code</Text>
-                <TextInput
-                  mode="outlined"
-                  style={styles.textInput}
-                  placeholder="Enter your postal code"
-                  keyboardType="number-pad"
-                  value={postalCode}
-                  onChangeText={setPostalCode} // Update the postalCode state
-                  maxLength={5}
-                />
-
-                <Text style={styles.inputLabel}>City</Text>
-                <RNPickerSelect
-                  onValueChange={(value) => setCity(value)}
-                  items={[
-                    { label: "Islamabad", value: "Islamabad" },
-                    { label: "Lahore", value: "Lahore" },
-                    { label: "Karachi", value: "Karachi" },
-                    { label: "Multan", value: "Multan" },
-                  ]}
-                  style={{
-                    inputIOS: {
-                      backgroundColor: "#fbfbfb",
-                      height: 50,
-                      width: "90%",
-                      borderWidth: 1,
-                      borderColor: "#7c7c7c",
-                      borderRadius: 5,
-                      padding: 10,
-                      color: "#333",
-                      marginLeft: 20,
-                      marginBottom: 20,
-                    },
-                    inputAndroid: {
-                      backgroundColor: "#fbfbfb",
-                      height: 50,
-                      width: "90%",
-                      borderWidth: 1,
-                      borderColor: "#7c7c7c",
-                      borderRadius: 5,
-                      padding: 10,
-                      color: "#333",
-                      marginLeft: 20,
-                      marginBottom: 20,
-                    },
-                  }}
-                />
-
-                <Text style={styles.inputLabel}>Select Payment Method</Text>
-                <View style={styles.radioButtonContainer}>
-                  <RadioButton.Group
-                    onValueChange={(value) => setPaymentMethod(value)}
-                    value={paymentMethod}
-                  >
-                    <RadioButton.Item
-                      label="Cash on Delivery"
-                      value="Cash On Delivery"
-                      color="#000" // Black color for the text
-                      uncheckedColor="#fff" // White color for the unchecked item
-                      style={[
-                        styles.radioButton,
-                        paymentMethod === "Cash On Delivery"
-                          ? styles.selectedRadioButton
-                          : null,
-                      ]} // Apply selected style conditionally
-                    />
-                    <RadioButton.Item
-                      label="Payment by Card"
-                      value="Payment by Card"
-                      color="#000" // Black color for the text
-                      uncheckedColor="#fff" // White color for the unchecked item
-                      style={[
-                        styles.radioButton,
-                        paymentMethod === "Payment by Card"
-                          ? styles.selectedRadioButton
-                          : null,
-                      ]} // Apply selected style conditionally
-                    />
-                  </RadioButton.Group>
-                </View>
-
-                {error ? (
-                  <View style={styles.errorContainer}>
-                    <Icon name="exclamation-circle" size={18} color="red" />
-                    <Text style={styles.errorText}>{error}</Text>
-                  </View>
-                ) : null}
-
-                <TouchableOpacity
-                  style={styles.register}
-                  onPress={handleCheckout}
-                >
-                  <Text style={styles.loginButtonText}>Place Order</Text>
-                </TouchableOpacity>
               </View>
             </View>
-          </TouchableWithoutFeedback>
-        </ScrollView>
-      </KeyboardAvoidingView>
+            <View style={styles.bodyContainer}>
+              <Text style={styles.title}>Checkout</Text>
+              <Text style={styles.subtitle}>
+                Complete your order by filling out the required information.
+              </Text>
+
+              <Text style={styles.inputLabel}>Full Name</Text>
+              <TextInput
+                mode="outlined"
+                style={styles.textInput}
+                placeholder="Enter your full name"
+                keyboardType="default"
+                value={name}
+                onChangeText={setName} // Update the name state
+              />
+
+              <Text style={styles.inputLabel}>Email Address</Text>
+              <TextInput
+                mode="outlined"
+                style={styles.textInput}
+                placeholder="Enter your email"
+                autoCapitalize="none"
+                keyboardType="email-address"
+                value={email}
+                onChangeText={setEmail} // Update the email state
+              />
+
+              <Text style={styles.inputLabel}>Phone Number</Text>
+              <TextInput
+                mode="outlined"
+                style={styles.textInput}
+                placeholder="Enter your phone number"
+                keyboardType="phone-pad"
+                value={number}
+                onChangeText={(text) =>
+                  setNumber(formatPhoneNumber(text.replace(/-/g, "")))
+                }
+                maxLength={12} // 4 digits, dash, 7 digits
+              />
+
+              <Text style={styles.inputLabel}>Home Address</Text>
+              <TextInput
+                mode="outlined"
+                style={styles.textInput}
+                placeholder="Enter your home address"
+                value={homeAddress}
+                onChangeText={setHomeAddress} // Update the homeAddress state
+              />
+
+              <Text style={styles.inputLabel}>Street Address</Text>
+              <TextInput
+                mode="outlined"
+                style={styles.textInput}
+                placeholder="Enter your street address"
+                value={streetAddress}
+                onChangeText={setStreetAddress} // Update the streetAddress state
+              />
+
+              <Text style={styles.inputLabel}>Town (Optional)</Text>
+              <TextInput
+                mode="outlined"
+                style={styles.textInput}
+                placeholder="Enter your town"
+                value={town}
+                onChangeText={setTown} // Update the town state
+              />
+
+              <Text style={styles.inputLabel}>Postal Code</Text>
+              <TextInput
+                mode="outlined"
+                style={styles.textInput}
+                placeholder="Enter your postal code"
+                keyboardType="number-pad"
+                value={postalCode}
+                onChangeText={setPostalCode} // Update the postalCode state
+                maxLength={5}
+              />
+
+              <Text style={styles.inputLabel}>City</Text>
+              <RNPickerSelect
+                onValueChange={(value) => setCity(value)}
+                items={[
+                  { label: "Islamabad", value: "Islamabad" },
+                  { label: "Lahore", value: "Lahore" },
+                  { label: "Karachi", value: "Karachi" },
+                  { label: "Multan", value: "Multan" },
+                ]}
+                style={{
+                  inputIOS: {
+                    backgroundColor: "#fbfbfb",
+                    height: 50,
+                    width: "90%",
+                    borderWidth: 1,
+                    borderColor: "#7c7c7c",
+                    borderRadius: 5,
+                    padding: 10,
+                    color: "#333",
+                    marginLeft: 20,
+                    marginBottom: 20,
+                  },
+                  inputAndroid: {
+                    backgroundColor: "#fbfbfb",
+                    height: 50,
+                    width: "90%",
+                    borderWidth: 1,
+                    borderColor: "#7c7c7c",
+                    borderRadius: 5,
+                    padding: 10,
+                    color: "#333",
+                    marginLeft: 20,
+                    marginBottom: 20,
+                  },
+                }}
+              />
+
+              <Text style={styles.inputLabel}>Select Payment Method</Text>
+              <View style={styles.radioButtonContainer}>
+                <RadioButton.Group
+                  onValueChange={(value) => setPaymentMethod(value)}
+                  value={paymentMethod}
+                >
+                  <RadioButton.Item
+                    label="Cash on Delivery"
+                    value="Cash On Delivery"
+                    color="#000" // Black color for the text
+                    uncheckedColor="#fff" // White color for the unchecked item
+                    style={[
+                      styles.radioButton,
+                      paymentMethod === "Cash On Delivery"
+                        ? styles.selectedRadioButton
+                        : null,
+                    ]} // Apply selected style conditionally
+                  />
+                  <RadioButton.Item
+                    label="Payment by Card"
+                    value="Payment by Card"
+                    color="#000" // Black color for the text
+                    uncheckedColor="#fff" // White color for the unchecked item
+                    style={[
+                      styles.radioButton,
+                      paymentMethod === "Payment by Card"
+                        ? styles.selectedRadioButton
+                        : null,
+                    ]} // Apply selected style conditionally
+                  />
+                </RadioButton.Group>
+              </View>
+
+              {error ? (
+                <View style={styles.errorContainer}>
+                  <Icon name="exclamation-circle" size={18} color="red" />
+                  <Text style={styles.errorText}>{error}</Text>
+                </View>
+              ) : null}
+
+              <TouchableOpacity
+                style={styles.register}
+                onPress={handleCheckout}
+              >
+                <Text style={styles.loginButtonText}>Place Order</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </TouchableWithoutFeedback>
+      </ScrollView>
+      {/* </KeyboardAvoidingView> */}
     </>
   );
 }

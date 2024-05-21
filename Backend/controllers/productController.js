@@ -9,6 +9,8 @@ exports.saveProduct = async (req, res) => {
             price,
             quantity,
             description,
+            make,
+            model,
             category,
             images // array of objects with filename and data properties
         } = req.body;
@@ -19,6 +21,8 @@ exports.saveProduct = async (req, res) => {
             quantity,
             description,
             category,
+            make,
+            model,
             images: images.map(base64String => ({
                 data: base64String
             })),
@@ -156,6 +160,68 @@ exports.placeOrder = async (req, res) => {
         console.log(error);
         res.status(500).json({
             message: 'Internal Server Error'
+        });
+    }
+};
+
+// Controller method to increment like count for a product
+exports.likeProduct = async (req, res) => {
+    try {
+        const {
+            id
+        } = req.params;
+        const product = await Product.findById(id);
+        if (!product) {
+            return res.status(404).json({
+                message: "Product not found"
+            });
+        }
+
+        // Increment the like count
+        product.likes += 1;
+        await product.save();
+
+        return res.status(200).json({
+            message: "Product liked successfully",
+            liked: true
+        });
+    } catch (error) {
+        console.error("Error liking product:", error);
+        return res.status(500).json({
+            message: "Internal server error"
+        });
+    }
+};
+
+// Controller method to decrement like count for a product
+exports.dislikeProduct = async (req, res) => {
+    try {
+        const {
+            id
+        } = req.params;
+        const product = await Product.findById(id);
+
+        if (!product) {
+            return res.status(404).json({
+                message: "Product not found"
+            });
+        }
+
+        // Check if the product has any likes
+        if (product.likes > 0) {
+            // Decrement the like count
+            product.likes -= 1;
+            await product.save();
+        }
+
+        return res.status(200).json({
+            message: "Product disliked successfully",
+            liked: false
+        });
+    } catch (error) {
+        console.error("Error disliking product:", error);
+        return res.status(500).json({
+            message: "Internal server error"
         });
     }
 };

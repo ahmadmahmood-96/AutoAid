@@ -21,6 +21,18 @@ const productSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    make: {
+        type: String,
+        required: true,
+    },
+    model: {
+        type: String,
+        required: true,
+    },
+    likes: {
+        type: Number,
+        default: 0,
+    },
     images: [{
         data: {
             type: String,

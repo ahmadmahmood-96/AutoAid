@@ -15,6 +15,9 @@ const {
     WorkshopOwner,
     ServiceProvider
 } = require("../models/user");
+const {
+    sendVerificationEmail
+} = require("../utils/sendVerificationEmail");
 
 exports.registerUser = async (req, res) => {
     try {

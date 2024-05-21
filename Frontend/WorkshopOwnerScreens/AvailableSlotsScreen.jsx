@@ -96,6 +96,7 @@ export default function AvailableSlotsScreen() {
   };
 
   const removeSlot = async (slotId) => {
+    const token = await AsyncStorage.getItem("authToken");
     // Show confirmation alert
     Alert.alert(
       "Confirm",

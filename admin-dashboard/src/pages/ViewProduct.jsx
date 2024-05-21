@@ -75,23 +75,18 @@ export default function ViewProduct() {
     },
     {
       key: 5,
-      title: "Description",
-      dataIndex: "description",
-      width: 250,
-      render: (text) => (
-        <div
-          style={{
-            maxHeight: 45,
-            overflow: "hidden",
-            textOverflow: "ellipsis",
-          }}
-        >
-          {text}
-        </div>
-      ),
+      title: "Make",
+      dataIndex: "make",
+      width: 150,
     },
     {
       key: 6,
+      title: "Model",
+      dataIndex: "model",
+      width: 150,
+    },
+    {
+      key: 7,
       title: "Actions",
       width: 150,
       render: (record) => {

@@ -19,10 +19,12 @@ const WorkshopDirections = ({ route }) => {
         const response = await axios.get(
           `https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins=${userCoordinates[1]},${userCoordinates[0]}&destinations=${workshopCoordinates[1]},${workshopCoordinates[0]}&key=${MAPS_API_KEY}`
         );
-        console.log(response.data.rows.elements[0]);
+        console.log(response.data.rows[0].elements[0].distance);
 
-        if (data.status === "OK") {
-          const distanceText = response.data.rows[0].elements[0].distance.text;
+        if (response.data.status === "OK") {
+          const distanceValue =
+            response.data.rows[0].elements[0].distance.value;
+          const distanceText = distanceValue / 1000;
           const durationText = response.data.rows[0].elements[0].duration.text;
 
           setDistance(distanceText);
@@ -76,7 +78,7 @@ const WorkshopDirections = ({ route }) => {
             />
           </MapView>
           <View style={styles.infoContainer}>
-            <Text style={styles.infoText}>Distance: {distance}</Text>
+            <Text style={styles.infoText}>Distance: {distance} km</Text>
             <Text style={styles.infoText}>ETA: {eta}</Text>
           </View>
         </>
@@ -105,10 +107,12 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(255, 255, 255, 0.8)",
     padding: 10,
     borderRadius: 10,
+    height: 100,
   },
   infoText: {
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: "bold",
+    marginBottom: 10,
   },
 });
 

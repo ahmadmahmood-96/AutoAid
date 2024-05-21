@@ -9,8 +9,8 @@ import {
   Pressable,
   TouchableOpacity,
   StatusBar,
-  FlatList,
   ActivityIndicator,
+  Modal,
 } from "react-native";
 import { MaterialIcons, Ionicons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -25,6 +25,9 @@ export default function ProductScreen({ navigation }) {
   const [selectedButton, setSelectedButton] = useState("All");
   const [loading, setLoading] = useState(true);
   const [cartItems, setCartItems] = useState([]);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [selectedMake, setSelectedMake] = useState([]);
+  const [selectedModel, setSelectedModel] = useState([]);
 
   const handleButtonPress = (button) => {
     setSelectedButton(button);
@@ -98,6 +101,37 @@ export default function ProductScreen({ navigation }) {
     fetchCartItems();
   }, [cartItems]);
 
+  const toggleModal = () => {
+    setModalVisible(!modalVisible);
+  };
+
+  const handleMakeChange = (make) => {
+    setSelectedMake((prevSelectedMake) =>
+      prevSelectedMake.includes(make)
+        ? prevSelectedMake.filter((m) => m !== make)
+        : [...prevSelectedMake, make]
+    );
+  };
+
+  const handleModelChange = (model) => {
+    setSelectedModel((prevSelectedModel) =>
+      prevSelectedModel.includes(model)
+        ? prevSelectedModel.filter((m) => m !== model)
+        : [...prevSelectedModel, model]
+    );
+  };
+
+  const applyFilter = () => {
+    setFilteredProducts(
+      products.filter(
+        (product) =>
+          (selectedMake.length === 0 || selectedMake.includes(product.make)) &&
+          (selectedModel.length === 0 || selectedModel.includes(product.model))
+      )
+    );
+    toggleModal();
+  };
+
   const renderProductItem = ({ item }) => (
     <Pressable
       key={item._id}
@@ -109,6 +143,9 @@ export default function ProductScreen({ navigation }) {
           price: item.price,
           description: item.description,
           images: item.images,
+          likes: item.likes,
+          make: item.make,
+          model: item.model,
         })
       }
     >
@@ -141,14 +178,12 @@ export default function ProductScreen({ navigation }) {
         contentContainerStyle={styles.scrollViewContent}
       >
         <View style={styles.searchContainer}>
-          {/* Search Icon */}
           <MaterialIcons
             name="search"
             size={24}
             style={styles.searchIcon}
             color="#00BE00"
           />
-          {/* Text Input with Search Icon */}
           <TextInput
             style={styles.searchInput}
             placeholder="Search"
@@ -205,10 +240,13 @@ export default function ProductScreen({ navigation }) {
               Bike
             </Text>
           </TouchableOpacity>
+          <TouchableOpacity style={styles.filterButton} onPress={toggleModal}>
+            <Text style={styles.filterButtonText}>Filter</Text>
+          </TouchableOpacity>
         </View>
         <View style={styles.rowContainer}>
           {loading ? (
-            <ActivityIndicator size="large" color="#00BE00" /> // Show loading indicator while data is being fetched
+            <ActivityIndicator size="large" color="#00BE00" />
           ) : filteredProducts.length > 0 ? (
             filteredProducts.map((item) => renderProductItem({ item }))
           ) : (
@@ -225,6 +263,67 @@ export default function ProductScreen({ navigation }) {
         )}
         <Ionicons name="cart-outline" size={30} color="black" />
       </TouchableOpacity>
+
+      <Modal
+        visible={modalVisible}
+        animationType="slide"
+        transparent={true}
+        onRequestClose={toggleModal}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>Filter Products</Text>
+            <Text style={styles.modalSubtitle}>Select Make</Text>
+            {["Honda", "Toyota", "Suzuki", "Hyundai"].map((make) => (
+              <TouchableOpacity
+                key={make}
+                style={styles.checkboxContainer}
+                onPress={() => handleMakeChange(make)}
+              >
+                <Text style={styles.checkboxLabel}>{make}</Text>
+                <View style={styles.checkbox}>
+                  {selectedMake.includes(make) && (
+                    <Ionicons name="checkmark" size={20} color="#00BE00" />
+                  )}
+                </View>
+              </TouchableOpacity>
+            ))}
+            <Text style={styles.modalSubtitle}>Select Model</Text>
+            {[
+              "City",
+              "Civic",
+              "Corolla",
+              "Altis",
+              "Mehran",
+              "Cultus",
+              "WagonR",
+              "70CC Bike",
+              "100CC Bike",
+              "125CC Bike",
+              "150CC Bike",
+            ].map((model) => (
+              <TouchableOpacity
+                key={model}
+                style={styles.checkboxContainer}
+                onPress={() => handleModelChange(model)}
+              >
+                <Text style={styles.checkboxLabel}>{model}</Text>
+                <View style={styles.checkbox}>
+                  {selectedModel.includes(model) && (
+                    <Ionicons name="checkmark" size={20} color="#00BE00" />
+                  )}
+                </View>
+              </TouchableOpacity>
+            ))}
+            <TouchableOpacity style={styles.applyButton} onPress={applyFilter}>
+              <Text style={styles.applyButtonText}>Apply Filter</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.closeButton} onPress={toggleModal}>
+              <Text style={styles.closeButtonText}>Close</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </>
   );
 }
@@ -404,5 +503,84 @@ const styles = StyleSheet.create({
     zIndex: 9,
     borderRadius: 8,
     overflow: "hidden",
+  },
+  filterButton: {
+    marginHorizontal: 5,
+    backgroundColor: "#f7f7f7",
+    padding: 7,
+    paddingHorizontal: 14,
+    borderRadius: 18,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 1,
+      height: 2,
+    },
+    shadowOpacity: 0.2,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  filterButtonText: {
+    fontSize: 16,
+    fontWeight: "bold",
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+  },
+  modalContent: {
+    backgroundColor: "#fff",
+    padding: 20,
+    margin: 20,
+    borderRadius: 10,
+  },
+  modalTitle: {
+    fontSize: 24,
+    fontWeight: "bold",
+    marginBottom: 10,
+  },
+  modalSubtitle: {
+    fontSize: 18,
+    fontWeight: "bold",
+    marginVertical: 10,
+  },
+  checkboxContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 10,
+  },
+  checkboxLabel: {
+    fontSize: 16,
+    flex: 1,
+  },
+  checkbox: {
+    width: 20,
+    height: 20,
+    borderWidth: 1,
+    borderColor: "#ccc",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  applyButton: {
+    backgroundColor: "#00BE00",
+    padding: 10,
+    borderRadius: 5,
+    marginTop: 20,
+  },
+  applyButtonText: {
+    color: "#fff",
+    textAlign: "center",
+    fontSize: 16,
+  },
+  closeButton: {
+    backgroundColor: "#ccc",
+    padding: 10,
+    borderRadius: 5,
+    marginTop: 10,
+  },
+  closeButtonText: {
+    color: "#000",
+    textAlign: "center",
+    fontSize: 16,
   },
 });

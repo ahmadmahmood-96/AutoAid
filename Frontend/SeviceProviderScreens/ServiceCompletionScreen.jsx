@@ -95,42 +95,42 @@ export default function ServiceCompletionScreen({ navigation, route }) {
 
   return (
     <>
-      <KeyboardAvoidingView behavior={"padding"} style={{ flex: 1 }}>
-        <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={true}>
-          <View style={styles.container}>
-            <StatusBar barStyle="light-content" />
-            <Image
-              source={require("../assets/user-icon.png")} // Path to your user icon image
-              style={styles.userIcon}
-            />
-            <Text style={styles.name}>{serviceRequest?.vehicleOwnerName}</Text>
-            <Text style={styles.inputLabel}>Final Price</Text>
-            <TextInput
-              mode="outlined"
-              style={styles.textInput}
-              placeholder="Enter your price"
-              autoCapitalize="none"
-              keyboardType="numeric"
-              value={price}
-              onChangeText={setPrice} // Updating the email state
-              maxLength={5}
-            />
-            <TouchableOpacity
-              style={styles.completeButton}
-              onPress={handleCompleteServiceRequest}
-              disabled={isLoading}
-            >
-              {isLoading ? (
-                <ActivityIndicator color="white" />
-              ) : (
-                <Text style={styles.completeButtonText}>
-                  Complete Service Request
-                </Text>
-              )}
-            </TouchableOpacity>
-          </View>
-        </TouchableWithoutFeedback>
-      </KeyboardAvoidingView>
+      {/* <KeyboardAvoidingView behavior={"padding"} style={{ flex: 1 }}> */}
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={true}>
+        <View style={styles.container}>
+          <StatusBar barStyle="light-content" />
+          <Image
+            source={require("../assets/user-icon.png")} // Path to your user icon image
+            style={styles.userIcon}
+          />
+          <Text style={styles.name}>{serviceRequest?.vehicleOwnerName}</Text>
+          <Text style={styles.inputLabel}>Final Price</Text>
+          <TextInput
+            mode="outlined"
+            style={styles.textInput}
+            placeholder="Enter your price"
+            autoCapitalize="none"
+            keyboardType="numeric"
+            value={price}
+            onChangeText={setPrice} // Updating the email state
+            maxLength={5}
+          />
+          <TouchableOpacity
+            style={styles.completeButton}
+            onPress={handleCompleteServiceRequest}
+            disabled={isLoading}
+          >
+            {isLoading ? (
+              <ActivityIndicator color="white" />
+            ) : (
+              <Text style={styles.completeButtonText}>
+                Complete Service Request
+              </Text>
+            )}
+          </TouchableOpacity>
+        </View>
+      </TouchableWithoutFeedback>
+      {/* </KeyboardAvoidingView> */}
     </>
   );
 }

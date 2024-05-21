@@ -10,16 +10,22 @@ import {
   Image,
   Dimensions,
   Alert,
+  ScrollView,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Ionicons } from "@expo/vector-icons";
+import axios from "axios";
 const { height, width } = Dimensions.get("window");
+const baseUrl = process.env.BASE_URL;
 
 export default function ProductInfoScreen({ navigation, route }) {
-  const { id, productName, price, description, images } = route.params;
+  const { id, productName, price, description, images, likes, make, model } =
+    route.params;
   const [indicators, setIndicators] = useState(Array(images.length).fill(1));
   const [currentIndex, setCurrentIndex] = useState(0);
   const [quantity, setQuantity] = useState(1);
+  const [likeCount, setLikeCount] = useState(likes); // State for like count
+  const [liked, setLiked] = useState(false); // State for liked status
 
   const handleAddItem = () => {
     if (quantity < 10) {
@@ -30,6 +36,52 @@ export default function ProductInfoScreen({ navigation, route }) {
   const handleRemoveItem = () => {
     if (quantity > 1) {
       setQuantity(quantity - 1);
+    }
+  };
+
+  // Method to like a product
+  const handleLikeProduct = async () => {
+    try {
+      const token = await AsyncStorage.getItem("authToken");
+      const response = await axios.post(
+        `${baseUrl}product/like-product/${id}`,
+        null,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      if (response.status === 200) {
+        // Update local like count and liked status
+        setLikeCount((prevCount) => prevCount + 1);
+        setLiked(true);
+      } else {
+        console.error("Failed to like product");
+      }
+    } catch (error) {
+      console.error("Error liking product:", error);
+    }
+  };
+
+  // Method to dislike a product
+  const handleDislikeProduct = async () => {
+    try {
+      const token = await AsyncStorage.getItem("authToken");
+      const response = await axios.delete(
+        `${baseUrl}product/dislike-product/${id}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      if (response.status === 200) {
+        // Update local like count and liked status
+        setLikeCount((prevCount) => prevCount - 1);
+        setLiked(false);
+      } else {
+        console.error("Failed to dislike product");
+      }
+    } catch (error) {
+      console.error("Error disliking product:", error);
     }
   };
 
@@ -121,6 +173,22 @@ export default function ProductInfoScreen({ navigation, route }) {
             })}
           </View>
         </View>
+        <View
+          style={{ flexDirection: "row", alignItems: "center", marginLeft: 10 }}
+        >
+          <TouchableOpacity
+            onPress={liked ? handleDislikeProduct : handleLikeProduct}
+          >
+            <Ionicons
+              name={liked ? "heart" : "heart-outline"}
+              size={29}
+              color={liked ? "red" : "black"}
+            />
+          </TouchableOpacity>
+          <Text style={{ fontSize: 22, marginLeft: 10, fontWeight: "500" }}>
+            {likeCount}
+          </Text>
+        </View>
         <View style={styles.productInformationContainer}>
           <Text style={styles.productName}>{productName}</Text>
           <View style={styles.quantitySection}>
@@ -141,12 +209,18 @@ export default function ProductInfoScreen({ navigation, route }) {
             </TouchableOpacity>
           </View>
         </View>
-        <View style={styles.priceSection}>
-          <Text style={styles.priceText}>Rs. {price}</Text>
+        <View style={{ marginLeft: 10 }}>
+          <Text style={{ fontSize: 16, fontWeight: "400" }}>Make: {make} </Text>
+          <Text style={{ fontSize: 16, fontWeight: "400" }}>
+            Model: {model}
+          </Text>
         </View>
         <View style={styles.descriptionSection}>
           <Text style={styles.descriptionHeading}>Description</Text>
           <Text style={styles.descriptionText}>{description}</Text>
+        </View>
+        <View style={styles.priceSection}>
+          <Text style={styles.priceText}>Rs. {price}</Text>
         </View>
         <View style={styles.addToCartbutton}>
           <TouchableOpacity
@@ -172,10 +246,6 @@ const styles = StyleSheet.create({
   },
   contentContainer: {
     flexDirection: "column",
-  },
-  backButton: {
-    marginLeft: 8,
-    marginTop: 12,
   },
   image: {
     width: width,

@@ -112,212 +112,209 @@ export default function InsuranceFormScreen({ navigation }) {
 
   return (
     <>
-      <KeyboardAvoidingView behavior={"padding"} style={{ flex: 1 }}>
-        <ScrollView>
-          <TouchableWithoutFeedback
-            onPress={Keyboard.dismiss}
-            accessible={true}
-          >
-            <View style={styles.container}>
-              <TouchableOpacity
-                style={styles.backButton}
-                onPress={() => navigation.navigate("Insurance")}
-              >
-                <Ionicons name="chevron-back" size={32} color="#ffff" />
-              </TouchableOpacity>
-              <StatusBar barStyle="auto" />
-              <View style={styles.headerContainer}>
-                <View style={styles.headerBox}>
-                  <Text style={styles.headerBoxText}>Insurance Form</Text>
-                  <Text style={styles.headerBoxTextHeading}>
-                    Check your Insurance claim
-                  </Text>
-                </View>
-              </View>
-              <View style={styles.bodyContainer}>
-                <Text style={styles.title}>Insurance Claim Form</Text>
-                <Text style={styles.subtitle}>
-                  Check your insurance claim by filling out the required
-                  information.
+      {/* <KeyboardAvoidingView behavior={"padding"} style={{ flex: 1 }}> */}
+      <ScrollView>
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={true}>
+          <View style={styles.container}>
+            <TouchableOpacity
+              style={styles.backButton}
+              onPress={() => navigation.navigate("Insurance")}
+            >
+              <Ionicons name="chevron-back" size={32} color="#ffff" />
+            </TouchableOpacity>
+            <StatusBar barStyle="auto" />
+            <View style={styles.headerContainer}>
+              <View style={styles.headerBox}>
+                <Text style={styles.headerBoxText}>Insurance Form</Text>
+                <Text style={styles.headerBoxTextHeading}>
+                  Check your Insurance claim
                 </Text>
-
-                <Text style={styles.inputLabel}>Age of car (in years)</Text>
-                <TextInput
-                  mode="outlined"
-                  style={styles.textInput}
-                  placeholder="Enter age of car"
-                  keyboardType="number-pad"
-                  value={ageOfCar}
-                  onChangeText={(text) => {
-                    // Validate if text is numeric and not zero and less than or equal to 100
-                    if (
-                      (/^\d+$/.test(text) || text === "") &&
-                      (parseInt(text) !== 0 || text === "") &&
-                      (parseInt(text) <= 100 || text === "")
-                    ) {
-                      setAgeOfCar(text);
-                    }
-                  }}
-                />
-
-                <Text style={styles.inputLabel}>
-                  Age of Policyholder (in years)
-                </Text>
-                <TextInput
-                  mode="outlined"
-                  style={styles.textInput}
-                  placeholder="Enter age of policyholder"
-                  keyboardType="number-pad"
-                  value={ageOfOwner}
-                  onChangeText={(text) => {
-                    // Validate if text is numeric and not zero and less than or equal to 100
-                    if (
-                      (/^\d+$/.test(text) || text === "") &&
-                      (parseInt(text) !== 0 || text === "") &&
-                      (parseInt(text) <= 100 || text === "")
-                    ) {
-                      setAgeofOwner(text);
-                    }
-                  }}
-                />
-
-                <Text style={styles.inputLabel}>Fuel Type</Text>
-                <RNPickerSelect
-                  onValueChange={(value) => setFuelType(value)}
-                  placeholder={{
-                    label: "Select Fuel type",
-                    value: 0,
-                  }}
-                  items={[
-                    { label: "Petrol", value: "Petrol" },
-                    { label: "Diesel", value: "Diesel" },
-                    { label: "CNG", value: "CNG" },
-                  ]}
-                  style={pickerSelectStyles}
-                />
-
-                <Text style={styles.inputLabel}>Airbags</Text>
-                <RNPickerSelect
-                  onValueChange={(value) => setAirBags(value)}
-                  placeholder={{
-                    label: "Select No. of Airbags",
-                    value: 0,
-                  }}
-                  items={[
-                    { label: "0", value: "0" },
-                    { label: "1", value: "1" },
-                    { label: "2", value: "2" },
-                    { label: "4", value: "4" },
-                    { label: "6", value: "6" },
-                  ]}
-                  style={pickerSelectStyles}
-                />
-
-                <Text style={styles.inputLabel}>Rear Brakes Type</Text>
-                <RNPickerSelect
-                  onValueChange={(value) => setRearBrakes(value)}
-                  placeholder={{
-                    label: "Select Rear Brakes type",
-                    value: 0,
-                  }}
-                  items={[
-                    { label: "Disc", value: "Disc" },
-                    { label: "Drum", value: "Drum" },
-                  ]}
-                  style={pickerSelectStyles}
-                />
-
-                <Text style={styles.inputLabel}>Transmission Type</Text>
-                <RNPickerSelect
-                  onValueChange={(value) => setTransmission(value)}
-                  placeholder={{
-                    label: "Select Transmission Type",
-                    value: 0,
-                  }}
-                  items={[
-                    { label: "Manual", value: "Manual" },
-                    { label: "Automatic", value: "Automatic" },
-                  ]}
-                  style={pickerSelectStyles}
-                />
-
-                <Text style={styles.inputLabel}>Gear Box</Text>
-                <RNPickerSelect
-                  onValueChange={(value) => setGearBox(value)}
-                  placeholder={{
-                    label: "Select No. of Gears",
-                    value: 0,
-                  }}
-                  items={[
-                    { label: "5", value: "5" },
-                    { label: "6", value: "6" },
-                  ]}
-                  style={pickerSelectStyles}
-                />
-
-                <Text style={styles.inputLabel}>Steering Type</Text>
-                <RNPickerSelect
-                  onValueChange={(value) => setSteeringType(value)}
-                  placeholder={{
-                    label: "Select Steering Type",
-                    value: 0,
-                  }}
-                  items={[
-                    { label: "Power", value: "Power" },
-                    { label: "Manual", value: "Manual" },
-                    { label: "Electric", value: "Electric" },
-                  ]}
-                  style={pickerSelectStyles}
-                />
-
-                <Text style={styles.inputLabel}>Front Fog Lights</Text>
-                <RNPickerSelect
-                  onValueChange={(value) => setIsFrontFogLights(value)}
-                  placeholder={{
-                    label: "Are there Front Fog Lights",
-                    value: 0,
-                  }}
-                  items={[
-                    { label: "Yes", value: "Yes" },
-                    { label: "No", value: "No" },
-                  ]}
-                  style={pickerSelectStyles}
-                />
-
-                <Text style={styles.inputLabel}>Power Steering</Text>
-                <RNPickerSelect
-                  onValueChange={(value) => setIsPowerSteering(value)}
-                  placeholder={{
-                    label: "Is there Power Steering",
-                    value: 0,
-                  }}
-                  items={[
-                    { label: "Yes", value: "Yes" },
-                    { label: "No", value: "No" },
-                  ]}
-                  style={pickerSelectStyles}
-                />
-
-                {error ? (
-                  <View style={styles.errorContainer}>
-                    <Icon name="exclamation-circle" size={18} color="red" />
-                    <Text style={styles.errorText}>{error}</Text>
-                  </View>
-                ) : null}
-
-                <TouchableOpacity
-                  style={styles.register}
-                  onPress={handleInsuranceClaim}
-                >
-                  <Text style={styles.loginButtonText}>
-                    Check Insurance Claim
-                  </Text>
-                </TouchableOpacity>
               </View>
             </View>
-          </TouchableWithoutFeedback>
-        </ScrollView>
-      </KeyboardAvoidingView>
+            <View style={styles.bodyContainer}>
+              <Text style={styles.title}>Insurance Claim Form</Text>
+              <Text style={styles.subtitle}>
+                Check your insurance claim by filling out the required
+                information.
+              </Text>
+
+              <Text style={styles.inputLabel}>Age of car (in years)</Text>
+              <TextInput
+                mode="outlined"
+                style={styles.textInput}
+                placeholder="Enter age of car"
+                keyboardType="number-pad"
+                value={ageOfCar}
+                onChangeText={(text) => {
+                  // Validate if text is numeric and not zero and less than or equal to 100
+                  if (
+                    (/^\d+$/.test(text) || text === "") &&
+                    (parseInt(text) !== 0 || text === "") &&
+                    (parseInt(text) <= 100 || text === "")
+                  ) {
+                    setAgeOfCar(text);
+                  }
+                }}
+              />
+
+              <Text style={styles.inputLabel}>
+                Age of Policyholder (in years)
+              </Text>
+              <TextInput
+                mode="outlined"
+                style={styles.textInput}
+                placeholder="Enter age of policyholder"
+                keyboardType="number-pad"
+                value={ageOfOwner}
+                onChangeText={(text) => {
+                  // Validate if text is numeric and not zero and less than or equal to 100
+                  if (
+                    (/^\d+$/.test(text) || text === "") &&
+                    (parseInt(text) !== 0 || text === "") &&
+                    (parseInt(text) <= 100 || text === "")
+                  ) {
+                    setAgeofOwner(text);
+                  }
+                }}
+              />
+
+              <Text style={styles.inputLabel}>Fuel Type</Text>
+              <RNPickerSelect
+                onValueChange={(value) => setFuelType(value)}
+                placeholder={{
+                  label: "Select Fuel type",
+                  value: 0,
+                }}
+                items={[
+                  { label: "Petrol", value: "Petrol" },
+                  { label: "Diesel", value: "Diesel" },
+                  { label: "CNG", value: "CNG" },
+                ]}
+                style={pickerSelectStyles}
+              />
+
+              <Text style={styles.inputLabel}>Airbags</Text>
+              <RNPickerSelect
+                onValueChange={(value) => setAirBags(value)}
+                placeholder={{
+                  label: "Select No. of Airbags",
+                  value: 0,
+                }}
+                items={[
+                  { label: "0", value: "0" },
+                  { label: "1", value: "1" },
+                  { label: "2", value: "2" },
+                  { label: "4", value: "4" },
+                  { label: "6", value: "6" },
+                ]}
+                style={pickerSelectStyles}
+              />
+
+              <Text style={styles.inputLabel}>Rear Brakes Type</Text>
+              <RNPickerSelect
+                onValueChange={(value) => setRearBrakes(value)}
+                placeholder={{
+                  label: "Select Rear Brakes type",
+                  value: 0,
+                }}
+                items={[
+                  { label: "Disc", value: "Disc" },
+                  { label: "Drum", value: "Drum" },
+                ]}
+                style={pickerSelectStyles}
+              />
+
+              <Text style={styles.inputLabel}>Transmission Type</Text>
+              <RNPickerSelect
+                onValueChange={(value) => setTransmission(value)}
+                placeholder={{
+                  label: "Select Transmission Type",
+                  value: 0,
+                }}
+                items={[
+                  { label: "Manual", value: "Manual" },
+                  { label: "Automatic", value: "Automatic" },
+                ]}
+                style={pickerSelectStyles}
+              />
+
+              <Text style={styles.inputLabel}>Gear Box</Text>
+              <RNPickerSelect
+                onValueChange={(value) => setGearBox(value)}
+                placeholder={{
+                  label: "Select No. of Gears",
+                  value: 0,
+                }}
+                items={[
+                  { label: "5", value: "5" },
+                  { label: "6", value: "6" },
+                ]}
+                style={pickerSelectStyles}
+              />
+
+              <Text style={styles.inputLabel}>Steering Type</Text>
+              <RNPickerSelect
+                onValueChange={(value) => setSteeringType(value)}
+                placeholder={{
+                  label: "Select Steering Type",
+                  value: 0,
+                }}
+                items={[
+                  { label: "Power", value: "Power" },
+                  { label: "Manual", value: "Manual" },
+                  { label: "Electric", value: "Electric" },
+                ]}
+                style={pickerSelectStyles}
+              />
+
+              <Text style={styles.inputLabel}>Front Fog Lights</Text>
+              <RNPickerSelect
+                onValueChange={(value) => setIsFrontFogLights(value)}
+                placeholder={{
+                  label: "Are there Front Fog Lights",
+                  value: 0,
+                }}
+                items={[
+                  { label: "Yes", value: "Yes" },
+                  { label: "No", value: "No" },
+                ]}
+                style={pickerSelectStyles}
+              />
+
+              <Text style={styles.inputLabel}>Power Steering</Text>
+              <RNPickerSelect
+                onValueChange={(value) => setIsPowerSteering(value)}
+                placeholder={{
+                  label: "Is there Power Steering",
+                  value: 0,
+                }}
+                items={[
+                  { label: "Yes", value: "Yes" },
+                  { label: "No", value: "No" },
+                ]}
+                style={pickerSelectStyles}
+              />
+
+              {error ? (
+                <View style={styles.errorContainer}>
+                  <Icon name="exclamation-circle" size={18} color="red" />
+                  <Text style={styles.errorText}>{error}</Text>
+                </View>
+              ) : null}
+
+              <TouchableOpacity
+                style={styles.register}
+                onPress={handleInsuranceClaim}
+              >
+                <Text style={styles.loginButtonText}>
+                  Check Insurance Claim
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </TouchableWithoutFeedback>
+      </ScrollView>
+      {/* </KeyboardAvoidingView> */}
     </>
   );
 }

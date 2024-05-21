@@ -7,6 +7,7 @@ const Drawer = createDrawerNavigator();
 import HomeScreen from "../WorkshopOwnerScreens/HomeScreen";
 import AppointmentSlotsScreen from "../WorkshopOwnerScreens/AppointmentSlotsScreen";
 import AvailableSlotsScreen from "../WorkshopOwnerScreens/AvailableSlotsScreen";
+import BookedSlotsScreen from "../WorkshopOwnerScreens/BookedSlotsScreen";
 
 export default function WorkshopOwnerHomeScreen({ navigation }) {
   return (
@@ -65,6 +66,29 @@ export default function WorkshopOwnerHomeScreen({ navigation }) {
             headerTransparent: true,
             drawerIcon: ({ color }) => (
               <Ionicons name="time-outline" size={24} color={color} />
+            ),
+          }}
+        />
+
+        <Drawer.Screen
+          name="Booked Slots"
+          component={BookedSlotsScreen}
+          options={{
+            headerTitle: "Booked Slots",
+            drawerActiveBackgroundColor: "#e4efe4",
+            drawerActiveTintColor: "#00BE00",
+            drawerInactiveTintColor: "#1d1d1d",
+            headerBackgroundContainerStyle: { display: "none" },
+            drawerLabelStyle: {
+              fontSize: 15,
+            },
+            headerTransparent: true,
+            drawerIcon: ({ color }) => (
+              <Ionicons
+                name="checkmark-circle-outline"
+                size={24}
+                color={color}
+              />
             ),
           }}
         />

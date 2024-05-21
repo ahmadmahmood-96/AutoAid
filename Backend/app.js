@@ -16,6 +16,7 @@ const adminRoutes = require("./routes/adminRoutes");
 const insuranceRoutes = require("./routes/insuranceRoutes");
 const serviceRoutes = require("./routes/serviceRoutes");
 const workshopRoutes = require("./routes/workshopRoutes");
+const mileageRoutes = require("./routes/mileageRoutes");
 
 // Importing Verifying Token Middleware
 const verifyToken = require("./middleware/verify");
@@ -53,6 +54,7 @@ app.use('/admin', verifyToken, adminRoutes);
 app.use('/insurance', verifyToken, insuranceRoutes);
 app.use('/service', verifyToken, serviceRoutes);
 app.use('/workshop', verifyToken, workshopRoutes);
+app.use('/mileage', verifyToken, mileageRoutes);
 
 // Server Listening
 app.listen(port, () => {

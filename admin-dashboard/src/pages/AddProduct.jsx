@@ -23,6 +23,8 @@ const AddProduct = () => {
   const [quantity, setQuantity] = useState();
   const [category, setCategory] = useState("");
   const [description, setDescription] = useState("");
+  const [make, setMake] = useState("");
+  const [model, setModel] = useState("");
   const [productImages, setProductImages] = useState([]);
 
   const onFinish = async (values) => {
@@ -51,6 +53,8 @@ const AddProduct = () => {
         quantity: values.quantity,
         category: values.category,
         description: values.description,
+        make: values.make,
+        model: values.model,
         images: base64Images,
       };
 
@@ -196,6 +200,60 @@ const AddProduct = () => {
           >
             <Option value="Bike">Bike</Option>
             <Option value="Car">Car</Option>
+          </Select>
+        </Form.Item>
+
+        <Form.Item
+          name="make"
+          label="Make"
+          rules={[
+            {
+              required: true,
+            },
+          ]}
+        >
+          <Select
+            placeholder="Select make (manufacturer company)"
+            value={make}
+            onChange={(value) => setMake(value)}
+            allowClear
+          >
+            <Option value="Honda">Honda</Option>
+            <Option value="Toyota">Toyota</Option>
+            <Option value="Suzuki">Suzuki</Option>
+            <Option value="Hyundai">Hyundai</Option>
+            <Option value="Nissan">Nissan</Option>
+            <Option value="MG">MG</Option>
+          </Select>
+        </Form.Item>
+
+        <Form.Item
+          name="model"
+          label="Model"
+          rules={[
+            {
+              required: true,
+            },
+          ]}
+        >
+          <Select
+            placeholder="Select Model"
+            value={model}
+            onChange={(value) => setModel(value)}
+            allowClear
+          >
+            <Option value="City">City</Option>
+            <Option value="Civic">Civic</Option>
+            <Option value="Corolla">Corolla</Option>
+            <Option value="Altis">Altis</Option>
+            <Option value="Grande">Grande</Option>
+            <Option value="Mehran">Mehran</Option>
+            <Option value="Cultus">Cultus</Option>
+            <Option value="WagonR">WagonR</Option>
+            <Option value="70CC Bike">70CC Bike</Option>
+            <Option value="100CC Bike">100CC Bike</Option>
+            <Option value="125CC Bike">125CC Bike</Option>
+            <Option value="150CC Bike">150CC Bike</Option>
           </Select>
         </Form.Item>
 

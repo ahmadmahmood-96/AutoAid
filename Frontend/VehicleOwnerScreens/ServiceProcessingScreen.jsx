@@ -115,7 +115,7 @@ export default function ServiceProcessingScreen({ navigation, route }) {
       //   `https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins=${origin.latitude},${origin.longitude}&destinations=${destination.latitude},${destination.longitude}&key=${MAPS_API_KEY}`
       // );
       // const distanceText = response.data.rows[0].elements[0].distance.value;
-      // const durationText = response.data.rows[0].elements[0].duration.text;s
+      // const durationText = response.data.rows[0].elements[0].duration.text;
       // Simulated duration text
       const durationText = "1 min";
 

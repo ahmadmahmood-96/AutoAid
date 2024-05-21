@@ -15,7 +15,7 @@ import { Ionicons } from "@expo/vector-icons";
 import axios from "axios";
 
 const baseUrl = process.env.BASE_URL;
-const OPENAI_API_KEY = process.env.BASE_URL;
+const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
 
 export default function ChatbotScreen() {
   const [messages, setMessages] = useState([]);
@@ -80,49 +80,49 @@ export default function ChatbotScreen() {
 
   return (
     <>
-      <KeyboardAvoidingView
+      {/* <KeyboardAvoidingView
         style={{ flex: 1 }}
         behavior={Platform.OS === "ios" ? "padding" : "height"}
-      >
-        <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={true}>
-          <SafeAreaView style={styles.container}>
-            <ScrollView
-              contentContainerStyle={styles.messagesContainer}
-              ref={scrollViewRef}
-              onContentSizeChange={scrollToBottom}
-            >
-              {messages.map((message) => (
-                <View
-                  key={message._id}
-                  style={[
-                    styles.message,
-                    message.sender === "user"
-                      ? styles.userMessage
-                      : styles.botMessage,
-                  ]}
-                >
-                  <Text style={styles.messageText}>{message.text}</Text>
-                </View>
-              ))}
-            </ScrollView>
-            <View style={styles.inputContainer}>
-              <TextInput
-                style={styles.input}
-                placeholder="Type your message..."
-                value={inputText}
-                onChangeText={(text) => setInputText(text)}
-                onSubmitEditing={handleSend}
-              />
-              <Ionicons
-                name="send"
-                size={24}
-                color="#00BE00"
-                onPress={handleSend}
-              />
-            </View>
-          </SafeAreaView>
-        </TouchableWithoutFeedback>
-      </KeyboardAvoidingView>
+      > */}
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={true}>
+        <SafeAreaView style={styles.container}>
+          <ScrollView
+            contentContainerStyle={styles.messagesContainer}
+            ref={scrollViewRef}
+            onContentSizeChange={scrollToBottom}
+          >
+            {messages.map((message) => (
+              <View
+                key={message._id}
+                style={[
+                  styles.message,
+                  message.sender === "user"
+                    ? styles.userMessage
+                    : styles.botMessage,
+                ]}
+              >
+                <Text style={styles.messageText}>{message.text}</Text>
+              </View>
+            ))}
+          </ScrollView>
+          <View style={styles.inputContainer}>
+            <TextInput
+              style={styles.input}
+              placeholder="Type your message..."
+              value={inputText}
+              onChangeText={(text) => setInputText(text)}
+              onSubmitEditing={handleSend}
+            />
+            <Ionicons
+              name="send"
+              size={24}
+              color="#00BE00"
+              onPress={handleSend}
+            />
+          </View>
+        </SafeAreaView>
+      </TouchableWithoutFeedback>
+      {/* </KeyboardAvoidingView> */}
     </>
   );
 }
