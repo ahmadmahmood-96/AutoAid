@@ -24,6 +24,7 @@
     "@stripe/stripe-react-native": "0.28.0",
     "axios": "^1.6.2",
     "base-64": "^1.0.0",
+    "eas-cli": "^9.2.0",
     "expo": "~49.0.15",
     "expo-device": "~5.4.0",
     "expo-location": "~16.1.0",

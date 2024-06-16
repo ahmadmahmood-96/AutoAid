@@ -99,9 +99,8 @@ export default function Dashboard() {
       <Typography.Title level={2}>Dashboard</Typography.Title>
       <Row gutter={[16, 16]} wrap>
         <Col span={6} xxl={6} xl={6} lg={6} md={6} sm={12} xs={24}>
-          <Card bordered={false}>
+          <Card title="Number of Vehicle Owners" bordered={false}>
             <Statistic
-              title="Number of Vehicle Owners"
               value={totalVehicleOwners}
               valueStyle={styles}
               formatter={formatter}
@@ -109,9 +108,8 @@ export default function Dashboard() {
           </Card>
         </Col>
         <Col span={6} xxl={6} xl={6} lg={6} md={6} sm={12} xs={24}>
-          <Card bordered={false}>
+          <Card title="Number of Service Providers" bordered={false}>
             <Statistic
-              title="Number of Service Providers"
               value={totalServiceProviders}
               valueStyle={styles}
               formatter={formatter}
@@ -119,9 +117,8 @@ export default function Dashboard() {
           </Card>
         </Col>
         <Col span={6} xxl={6} xl={6} lg={6} md={6} sm={12} xs={24}>
-          <Card bordered={false}>
+          <Card title="Number of Workshop Owners" bordered={false}>
             <Statistic
-              title="Number of Workshop Owners"
               value={totalWorkshopOwners}
               valueStyle={styles}
               formatter={formatter}
@@ -129,9 +126,8 @@ export default function Dashboard() {
           </Card>
         </Col>
         <Col span={6} xxl={6} xl={6} lg={6} md={6} sm={12} xs={24}>
-          <Card bordered={false}>
+          <Card title="Number of Products" bordered={false}>
             <Statistic
-              title="Number of Products"
               value={totalProducts}
               valueStyle={styles}
               formatter={formatter}
@@ -139,9 +135,8 @@ export default function Dashboard() {
           </Card>
         </Col>
         <Col span={6} xxl={6} xl={6} lg={6} md={6} sm={12} xs={24}>
-          <Card bordered={false}>
+          <Card title="Total Number of Orders" bordered={false}>
             <Statistic
-              title="Total Number of Orders"
               value={totalOrders}
               valueStyle={styles}
               formatter={formatter}
@@ -149,9 +144,8 @@ export default function Dashboard() {
           </Card>
         </Col>
         <Col span={6} xxl={6} xl={6} lg={6} md={6} sm={12} xs={24}>
-          <Card bordered={false}>
+          <Card title="Orders Dispatched" bordered={false}>
             <Statistic
-              title="Orders Dispatched"
               value={totalDispatchedOrders}
               valueStyle={styles}
               formatter={formatter}
@@ -159,9 +153,8 @@ export default function Dashboard() {
           </Card>
         </Col>
         <Col span={6} xxl={6} xl={6} lg={6} md={6} sm={12} xs={24}>
-          <Card bordered={false}>
+          <Card title="Orders Delivered" bordered={false}>
             <Statistic
-              title="Orders Delivered"
               value={totalDeliveredOrders}
               valueStyle={styles}
               formatter={formatter}

@@ -16,21 +16,26 @@
     ],
     "ios": {
       "supportsTablet": true
-    
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }, 
+      },
       "config": {
         "googleMaps": {
           "apiKey": "AIzaSyAJuq_WlCSpTlcTQ8TETKyUimhDpL_NsKM"
         }
-      }
+      },
+      "package": "com.ahmadmahmood.AutoAid"
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "8d688340-cfad-488c-85aa-0da338f14039"
+      }
     }
   }
 }

@@ -79,20 +79,20 @@ export default function ServiceAcceptedScreen({ navigation, route }) {
 
   const calculateDistanceAndETA = async (origin, destination) => {
     try {
-      // const response = await axios.get(
-      //   `https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins=${origin.latitude},${origin.longitude}&destinations=${destination.latitude},${destination.longitude}&key=${MAPS_API_KEY}`
-      // );
-      // const distanceText = response.data.rows[0].elements[0].distance.value;
-      // const durationText = response.data.rows[0].elements[0].duration.text;
-      const durationText = "2 min";
+      const response = await axios.get(
+        `https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins=${origin.latitude},${origin.longitude}&destinations=${destination.latitude},${destination.longitude}&key=${MAPS_API_KEY}`
+      );
+      const distanceText = response.data.rows[0].elements[0].distance.value;
+      const durationText = response.data.rows[0].elements[0].duration.text;
+      // const durationText = "2 min";
 
-      setDistance(1000);
-      setETA("2 min");
+      setDistance(distanceText);
+      setETA(durationText);
 
-      // // Update distance and ETA every 60 seconds
-      // setTimeout(() => {
-      //   calculateDistanceAndETA(origin, destination);
-      // }, 60000);
+      // Update distance and ETA every 60 seconds
+      setTimeout(() => {
+        calculateDistanceAndETA(origin, destination);
+      }, 60000);
 
       // Navigate to new screen if ETA is 1 min
       if (durationText === "1 min") {
